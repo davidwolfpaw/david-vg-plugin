@@ -62,8 +62,6 @@ class David_VG_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
-		$this->load_dependencies();
-
 	}
 
 	/**
@@ -111,62 +109,5 @@ class David_VG_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/david-vg-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-
-	/**
-	 * Add a settings page and menu item
-	 *
-	 * @since  1.0.0
-	 */
-	// public function add_options_page() {
-
-	// 	$this->plugin_screen_hook_suffix = add_menu_page(
-	// 		__( 'David VG Settings', 'david-vg' ),
-	// 		__( 'David VG', 'david-vg' ),
-	// 		'manage_options',
-	// 		$this->plugin_name,
-	// 		array( $this, 'display_options_page' ),
-	// 		'dashicons-admin-settings',
-	// 		3.14159
-	// 	);
-
-	// 	add_submenu_page(
-	// 		$this->plugin_name,
-	// 		'DavidVG Options',
-	// 		'Options',
-	// 		'manage_options',
-	// 		'david_vg_subsettings',
-	// 		array( $this, 'display_options_page' )
-	// 	);
-
-	// }
-
-	// /**
-	//  * Render the options page for plugin
-	//  *
-	//  * @since  1.0.0
-	//  */
-	// public function display_options_page() {
-	// 	include_once 'partials/david-vg-admin-display.php';
-	// }
-
-	/**
-     * Load the required dependencies for the Admin facing functionality.
-     *
-     * Include the following files that make up the plugin:
-     *
-     * - Wppb_Demo_Plugin_Admin_Settings. Registers the admin settings and page.
-     *
-     *
-     * @since    1.0.0
-     * @access   private
-     */
-    private function load_dependencies() {
-
-        /**
-         * The class responsible for settings
-         */
-        require_once plugin_dir_path( dirname( __FILE__ ) ) .  'admin/class-david-vg-settings.php';
-
-    }
 
 }

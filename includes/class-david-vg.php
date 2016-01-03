@@ -13,9 +13,6 @@
  * @subpackage David_VG/includes
  */
 
-// Inlcude Stream Classes
-require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-twitter.php';
-
 /**
  * The core plugin class.
  *
@@ -119,7 +116,7 @@ class David_VG {
         /**
          * The class responsible for settings
          */
-        require_once plugin_dir_path( dirname( __FILE__ ) ) .  'admin/class-david-vg-settings.php';
+        require_once plugin_dir_path( dirname( __FILE__ ) ) .  'admin/settings/class-david-vg-settings.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -131,6 +128,11 @@ class David_VG {
 		 * The class responsible for defining a base data stream
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-david-vg-datum.php';
+
+		/**
+		 * Stream Classes
+		 */
+		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-twitter.php';
 
 		$this->loader = new David_VG_Loader();
 

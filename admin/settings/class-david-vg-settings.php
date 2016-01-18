@@ -58,8 +58,7 @@ class David_VG_Admin_Settings {
 			__( 'David VG', 'david-vg' ),
 			'manage_options',
 			$this->plugin_name,
-			// array( $this, 'render_settings_page_content'),
-			'',
+			array( $this, 'render_settings_page_content'),
 			'dashicons-admin-settings',
 			3.14159
 		);
@@ -70,15 +69,15 @@ class David_VG_Admin_Settings {
 			'DavidVG Settings',
 			'Settings',
 			'manage_options',
-			'dvg-settings',
-			array( $this, 'render_settings_page_content')
+			$this->plugin_name,
+			''
 		);
 
 	}
 
 
 	/**
-	 * Provide default values for the Social Options.
+	 * Provide default values for the Twitter options
 	 *
 	 * @return array
 	 */
@@ -95,24 +94,6 @@ class David_VG_Admin_Settings {
 
 	}
 
-	/**
-	 * Provides default values for the Input Options.
-	 *
-	 * @return array
-	 */
-	public function default_input_options() {
-
-		$defaults = array(
-			'input_example'		=>	'default input example',
-			'textarea_example'	=>	'',
-			'checkbox_example'	=>	'',
-			'radio_example'		=>	'2',
-			'time_options'		=>	'default'
-		);
-
-		return $defaults;
-
-	}
 
 	/**
 	 * Renders a simple page to display for the theme menu defined above.

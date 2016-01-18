@@ -173,7 +173,8 @@ class David_VG {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		// Plugin Settings
-        $this->loader->add_action( 'admin_menu', $plugin_settings, 'setup_plugin_options_menu' );
+		 // Priority of 9 on admin_menu to place settings at top of menu page
+        $this->loader->add_action( 'admin_menu', $plugin_settings, 'setup_plugin_options_menu', 9 );
         $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_twitter_settings' );
         $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_input_examples' );
 

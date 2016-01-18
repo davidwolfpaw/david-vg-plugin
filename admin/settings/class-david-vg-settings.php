@@ -215,43 +215,48 @@ class David_VG_Admin_Settings {
 		);
 
 		add_settings_field(
-			'dvig_twitter_user',
+			'dvg_twitter_user',
 			__( 'Twitter Username', 'david-vg' ),
-			array( $this, 'twitter_user_callback'),
+			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_user', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_user' )
 		);
 
 		add_settings_field(
 			'dvg_twitter_consumer_key',
 			__( 'Twitter Consumer Key', 'david-vg' ),
-			array( $this, 'twitter_consumer_key_callback'),
+			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_consumer_key', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_consumer_key' )
 		);
 
 		add_settings_field(
 			'dvg_twitter_consumer_secret',
 			__( 'Twitter Consumer Secret', 'david-vg' ),
-			array( $this, 'twitter_consumer_secret_callback'),
+			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_consumer_secret', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_consumer_secret' )
 		);
 
 		add_settings_field(
 			'dvg_twitter_access_token',
 			__( 'Twitter Access Token', 'david-vg' ),
-			array( $this, 'twitter_access_token_callback'),
+			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_access_token', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_access_token' )
 		);
 
 		add_settings_field(
 			'dvg_twitter_access_token_secret',
 			__( 'Twitter Access Token Secret', 'david-vg' ),
-			array( $this, 'twitter_access_token_secret_callback'),
+			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_access_token_secret', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_access_token_secret' )
 		);
 
 		add_settings_field(
@@ -321,59 +326,30 @@ class David_VG_Admin_Settings {
 	}
 
 
+
+
+
+	/**
+	 * Input Callbacks
+	 */
+	public function text_input_callback( $text_input ) {
+
+		// Get arguments from setting
+		$option_group = $text_input['option_group'];
+		$option_id = $text_input['option_id'];
+		$option_name = $option_group . '[' . $option_id . ']';
+
+		// Get existing option from database
+		$options = get_option( $option_group );
+
+		// Render the output
+		echo '<input type="text" id="' . $option_id . '" name="' . $option_name . ']" value="' . $options[$option_id] . '" />';
+
+	}
+
 	/**
 	 * TWITTER SETTINGS
 	 */
-	public function twitter_user_callback() {
-
-		// First, we read the social options collection
-		$options = get_option( 'dvg_twitter_settings' );
-
-		// Render the output
-		echo '<input type="text" id="twitter_user" name="dvg_twitter_settings[twitter_user]" value="' . $options['twitter_user'] . '" />';
-
-	} // end twitter_user_callback
-
-	public function twitter_consumer_key_callback() {
-
-		// First, we read the social options collection
-		$options = get_option( 'dvg_twitter_settings' );
-
-		// Render the output
-		echo '<input type="text" id="twitter_consumer_key" name="dvg_twitter_settings[twitter_consumer_key]" value="' . $options['twitter_consumer_key'] . '" />';
-
-	} // end twitter_consumer_key_callback
-
-	public function twitter_consumer_secret_callback() {
-
-		// First, we read the social options collection
-		$options = get_option( 'dvg_twitter_settings' );
-
-		// Render the output
-		echo '<input type="text" id="twitter_consumer_secret" name="dvg_twitter_settings[twitter_consumer_secret]" value="' . $options['twitter_consumer_secret'] . '" />';
-
-	} // end twitter_consumer_secret_callback
-
-	public function twitter_access_token_callback() {
-
-		// First, we read the social options collection
-		$options = get_option( 'dvg_twitter_settings' );
-
-		// Render the output
-		echo '<input type="text" id="twitter_access_token" name="dvg_twitter_settings[twitter_access_token]" value="' . $options['twitter_access_token'] . '" />';
-
-	} // end twitter_access_token_callback
-
-	public function twitter_access_token_secret_callback() {
-
-		// First, we read the social options collection
-		$options = get_option( 'dvg_twitter_settings' );
-
-		// Render the output
-		echo '<input type="text" id="twitter_access_token_secret" name="dvg_twitter_settings[twitter_access_token_secret]" value="' . $options['twitter_access_token_secret'] . '" />';
-
-	} // end twitter_access_token_secret_callback
-
 	public function twitter_include_retweets_callback() {
 
 		$options = get_option( 'dvg_twitter_settings' );

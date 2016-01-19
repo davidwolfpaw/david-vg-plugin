@@ -189,7 +189,7 @@ class David_VG {
 		// Pocket Hooks
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		// $this->loader->add_action( 'init', $pocket_includes, 'set_twitter_schedule' );
-		$this->loader->add_action( 'the_content', $pocket_includes, 'import_pocket_as_posts' );
+		$this->loader->add_action( 'wp', $pocket_includes, 'import_pocket_as_posts' );
 
 	}
 

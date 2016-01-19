@@ -146,8 +146,27 @@ class David_VG_Pocket {
         // Get settings from Pocket settings page
         $post_settings_array = $this->get_post_settings_array();
 
-        // Connect to Twitter OAuth
+        // Connect to Pocket OAuth
         $connection = $this->connect_to_pocket( $post_settings_array );
+
+        echo '<pre>';
+
+        var_dump($connection);
+
+        echo '</pre>';
+
+
+
+        // Retrieve the user's list of unread items (limit 5)
+        // http://getpocket.com/developer/docs/v3/retrieve for a list of params
+        // $params = array(
+        //     'state' => 'unread',
+        //     'sort' => 'newest',
+        //     'detailType' => 'simple',
+        //     'count' => 5
+        // );
+        // $items = $connection->pocket->retrieve( $params, $user['access_token'] );
+        // print_r($items);
 
         // // Create $tweet_api_url from settings
         // $tweet_api_url = $this->create_tweet_api_url( $post_settings_array );
@@ -177,17 +196,8 @@ class David_VG_Pocket {
         //         // Do Nothing with tweets that exist in the DB already
         //         if( $post_exist ) continue;
 
-        //         // Do nothing with retweets if posting them is disabled
-        //         if( $post_settings_array['exclude_retweets'] == 1 && $tweet->retweeted_status ) continue;
-
         //         // Convert tweet links into usable links
         //         $tweet_text = $this->convert_tweet_links( $tweet );
-
-        //         // Convert @ to follow
-        //         $tweet_text = $this->convert_replies_to_follows( $tweet_text );
-
-        //         // Link hashtags to search queries
-        //         $tweet_text = $this->convert_hashtags_to_search( $tweet, $tweet_text );
 
         //         // Set tweet time as post publish date
         //         $publish_date_time = $this->set_publish_time( $tweet );
@@ -217,123 +227,73 @@ class David_VG_Pocket {
 
     public function connect_to_pocket( $post_settings_array ) {
 
-        // Show all errors/warnings
-        error_reporting(E_ALL);
-        ini_set('display_errors', '1');
-
         $params = array(
             'consumerKey' => $post_settings_array['consumerkey'] // fill in your Pocket App Consumer Key
         );
 
-        if (empty($params['consumerKey'])) {
-            die('Please fill in your Pocket App Consumer Key');
+        if ( empty( $params['consumerKey'] ) ) {
+            die( __( 'Please fill in your Pocket App Consumer Key', 'david-vg' ) );
         }
 
-        $pocket = new Pocket($params);
+        $pocket = new Pocket( $params );
 
-        // if (isset($_GET['authorized'])) {
-        //     // Convert the requestToken into an accessToken
-        //     // Note that a requestToken can only be covnerted once
-        //     // Thus refreshing this page will generate an auth error
-        //     $user = $pocket->convertToken($_GET['authorized']);
-        //     /*
-        //         $user['access_token']   the user's access token for calls to Pocket
-        //         $user['username']   the user's pocket username
-        //     */
-        //     print_r($user);
+        if ( isset( $_GET['authorized'] ) ) {
+            // Convert the requestToken into an accessToken
+            // Note that a requestToken can only be covnerted once
+            // Thus refreshing this page will generate an auth error
+            $user = $pocket->convertToken( $_GET['authorized'] );
+            /*
+             * $user['access_token']   the user's access token for calls to Pocket
+             * $user['username']   the user's pocket username
+             */
 
-        //     // Set the user's access token to be used for all subsequent calls to the Pocket API
-        //     $pocket->setAccessToken($user['access_token']);
+            // Set the user's access token to be used for all subsequent calls to the Pocket API
+            $pocket->setAccessToken( $user['access_token'] );
 
-        //     // Add a url to the user's pocket
-        //     // http://getpocket.com/developer/docs/v3/add for a list of params
-        //     $params = array(
-        //         'url' => 'https://github.com/djchen/', // required
-        //         'tags' => 'github'
-        //     );
-        //     print_r($pocket->add($params, $user['access_token']));
 
-        //     // Retrieve the user's list of unread items (limit 5)
-        //     // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-        //     $params = array(
-        //         'state' => 'unread',
-        //         'sort' => 'newest',
-        //         'detailType' => 'simple',
-        //         'count' => 5
-        //     );
-        //     $items = $pocket->retrieve($params, $user['access_token']);
-        //     print_r($items);
+            // Retrieve the user's list of unread items (limit 5)
+            // http://getpocket.com/developer/docs/v3/retrieve for a list of params
+            $params = array(
+                'state' => 'unread',
+                'sort' => 'newest',
+                'detailType' => 'simple',
+                'count' => 5
+            );
+            $items = $pocket->retrieve( $params, $user['access_token'] );
+            // print_r($items);
 
-        // } else {
-        //     // Attempt to detect the url of the current page to redirect back to
-        //     // Normally you wouldn't do this
-        //     $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
+        } else {
+            // Attempt to detect the url of the current page to redirect back to
+            // Normally you wouldn't do this
+            $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
 
-        //     // Request a token from Pocket
-        //     $result = $pocket->requestToken($redirect);
-        //     /*
-        //         $result['redirect_uri']     this is the URL to send the user to getpocket.com to authorize your app
-        //         $result['request_token']    this is the request_token which you will need to use to
-        //                         obtain the user's access token after they have authorized your app
-        //     */
+            // Request a token from Pocket
+            $result = $pocket->requestToken($redirect);
+            /*
+             * $result['redirect_uri']     this is the URL to send the user to getpocket.com to authorize your app
+             * $result['request_token']    this is the request_token which you will need to use to
+             *                             obtain the user's access token after they have authorized your app
+            */
 
-        //     /*
-        //     This is a hack to redirect back to us with the requestToken
-        //     Normally you should save the 'request_token' in a session so it can be
-        //     retrieved when the user is redirected back to you
-        //     */
-        //     $result['redirect_uri'] = str_replace(
-        //         urlencode('?authorized='),
-        //         urlencode('?authorized=' . $result['request_token']),
-        //         $result['redirect_uri']
-        //     );
-        //     // END HACK
+            /*
+             * This is a hack to redirect back to us with the requestToken
+             * Normally you should save the 'request_token' in a session so it can be
+             * retrieved when the user is redirected back to you
+             */
+            $result['redirect_uri'] = str_replace(
+                urlencode('?authorized='),
+                urlencode('?authorized=' . $result['request_token']),
+                $result['redirect_uri']
+            );
+            // END HACK
 
-        //     header('Location: ' . $result['redirect_uri']);
-        // }
+            header('Location: ' . $result['redirect_uri']);
+        }
+
+        return $items;
 
     }
 
-
-
-    // // public function create_tweet_api_url( $post_settings_array ){
-
-    // //     // Create $tweet_api_url from settings
-    // //     $tweet_api_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $post_settings_array['twitter_user'] . '&count=10';
-
-    // //     if( $post_settings_array['exclude_retweets'] == 1 ) {
-    // //         $tweet_api_url .= '&include_rts=false';
-    // //     }
-
-    // //     if( $post_settings_array['exclude_replies'] == 1 ) {
-    // //         $tweet_api_url .= '&exclude_replies=true';
-    // //     }
-
-    // //     // Get the most recent tweet to add the ID to the URL
-    // //     $args = array(
-    // //         'posts_per_page' => 1,
-    // //         'post_type' => 'pocket_stream',
-    // //         'meta_key' => '_pocket_id',
-    // //         'order' => 'DESC'
-    // //         );
-
-    // //     $posts = get_posts( $args );
-    // //     if( $posts ) {
-
-    // //         foreach($posts as $post){
-    // //             $post_pocket_id = get_post_meta($post->ID, '_pocket_id', true);
-    // //         }
-
-    // //         // Get twitter feeds after the recent tweet (by id) in WordPress database
-    // //         if($post_pocket_id){
-    // //             $tweet_api_url .= '&since_id=' . $post_pocket_id;
-    // //         }
-
-    // //     }
-
-    // //     return $tweet_api_url;
-
-    // // }
 
 
     // // public function create_featured_image( $tweet, $insert_id ) {

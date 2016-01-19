@@ -185,9 +185,10 @@ class Pocket {
 		curl_close($c);
 
 		$result = json_decode($response, true);
-		if (!$result) {
-			throw new PocketException('Error could not parse response: ' . var_export($response));
-		}
+		// var_dump($result);
+		// if (!$result) {
+		// 	throw new PocketException('Error could not parse response: ' . var_export($response));
+		// }
 
 		return $result;
 	}

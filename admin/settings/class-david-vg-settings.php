@@ -87,6 +87,8 @@ class David_VG_Admin_Settings {
 			'dvg_twitter_consumer_secret'	=> '',
 			'dvg_twitter_access_token'	=> '',
 			'dvg_twitter_access_token_secret'	=> '',
+			'dvg_twitter_exclude_retweets'	=> '1',
+			'dvg_twitter_exclude_replies'	=> '1',
 		);
 
 		return  $defaults;
@@ -250,21 +252,22 @@ class David_VG_Admin_Settings {
 		);
 
 		add_settings_field(
-			'dvg_twitter_include_retweets',
+			'dvg_twitter_exclude_retweets',
 			__( 'Exclude Retweets?', 'david-vg' ),
-			array( $this, 'twitter_include_retweets_callback'),
+			array( $this, 'checkbox_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_exclude_retweets', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_retweets', 'option_description' => 'Should retweets be excluded?' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_include_replies',
+			'dvg_twitter_exclude_replies',
 			__( 'Exclude Replies?', 'david-vg' ),
-			array( $this, 'twitter_include_replies_callback'),
+			array( $this, 'checkbox_input_callback'),
 			'dvg_twitter_settings',
-			'twitter_settings_section'
+			'twitter_settings_section',
+			array( 'label_for' => 'dvg_twitter_exclude_replies', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_replies', 'option_description' => 'Should @replies be excluded?' )
 		);
-
 
 		register_setting(
 			'dvg_twitter_settings',
@@ -302,6 +305,15 @@ class David_VG_Admin_Settings {
 			array( 'label_for' => 'dvg_pocket_consumer_key', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_consumer_key' )
 		);
 
+		add_settings_field(
+			'dvg_pocket_access_token',
+			__( 'Pocket Access Token', 'david-vg' ),
+			array( $this, 'text_input_callback'),
+			'dvg_pocket_settings',
+			'pocket_settings_section',
+			array( 'label_for' => 'dvg_pocket_access_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_access_token' )
+		);
+
 
 		register_setting(
 			'dvg_pocket_settings',
@@ -328,36 +340,44 @@ class David_VG_Admin_Settings {
 		$options = get_option( $option_group );
 
 		// Render the output
-		echo '<input type="text" id="' . $option_id . '" name="' . $option_name . ']" value="' . $options[$option_id] . '" />';
+		echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="' . $options[$option_id] . '" />';
 
 	}
 
-	/**
-	 * TWITTER SETTINGS
-	 */
-	public function twitter_include_retweets_callback() {
+	public function checkbox_input_callback( $checkbox_input ) {
 
-		$options = get_option( 'dvg_twitter_settings' );
+		// Get arguments from setting
+		$option_group = $checkbox_input['option_group'];
+		$option_id = $checkbox_input['option_id'];
+		$option_name = $option_group . '[' . $option_id . ']';
+		$option_description = $checkbox_input['option_description'];
 
-		$html = '<input type="checkbox" id="exclude_retweets" name="dvg_twitter_settings[exclude_retweets]" value="1"' . checked( 1, $options['exclude_retweets'], false ) . '/>';
-		$html .= '<label for="exclude_retweets">Should retweets be excluded?</label>';
+		// Get existing option from database
+		$options = get_option( $option_group );
 
-		echo $html;
-
-	} // end twitter_include_retweets_callback
-
-	public function twitter_include_replies_callback() {
-
-		$options = get_option( 'dvg_twitter_settings' );
-
-		$html = '<input type="checkbox" id="exclude_replies" name="dvg_twitter_settings[exclude_replies]" value="1"' . checked( 1, $options['exclude_replies'], false ) . '/>';
-		$html .= '<label for="exclude_replies">Should @replies be excluded?</label>';
+		// Render the output
+		$html = '<input type="checkbox" id="' . $option_id . '" name="' . $option_name . '" value="1" ' . checked( 1, $options[$option_id], false ) . ' />';
+		$html .= '<label for="' . $option_id . '">' . $option_description . '</label>';
 
 		echo $html;
 
-	} // end twitter_include_replies_callback
+	}
 
 
+	public function pocket_access_token_callback( $text_input ) {
+
+		// Get arguments from setting
+		$option_group = $text_input['option_group'];
+		$option_id = $text_input['option_id'];
+		$option_name = $option_group . '[' . $option_id . ']';
+
+		// Get existing option from database
+		$options = get_option( $option_group );
+
+		// Render the output
+		echo '<input type="text" id="' . $option_id . '" name="' . $option_name . ']" value="' . $options[$option_id] . '" />';
+
+	}
 
 
 

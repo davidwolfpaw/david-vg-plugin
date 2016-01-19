@@ -11,7 +11,7 @@
  */
 
 // Require Twitter OAuth package
-require_once plugin_dir_path( __FILE__ ) . 'twitteroauth.php';
+require_once plugin_dir_path( __FILE__ ) . 'twitter/twitteroauth.php';
 
 /**
  *
@@ -60,7 +60,6 @@ class David_VG_Twitter {
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
-        // $this->post_type = create_custom_post_type();
 
     }
 

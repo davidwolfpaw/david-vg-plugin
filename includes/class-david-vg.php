@@ -133,6 +133,7 @@ class David_VG {
 		 * Stream Classes
 		 */
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-twitter.php';
+		// require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-pocket.php';
 
 		$this->loader = new David_VG_Loader();
 
@@ -168,21 +169,27 @@ class David_VG {
 		$plugin_admin = new David_VG_Admin( $this->get_plugin_name(), $this->get_version() );
 		$plugin_settings = new David_VG_Admin_Settings( $this->get_plugin_name(), $this->get_version() );
 		$twitter_includes = new David_VG_Twitter( $this->get_plugin_name(), $this->get_version() );
+		// $pocket_includes = new David_VG_Pocket( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		// Plugin Settings
-		 // Priority of 9 on admin_menu to place settings at top of menu page
+		// Priority of 9 on admin_menu to place settings at top of menu page
         $this->loader->add_action( 'admin_menu', $plugin_settings, 'setup_plugin_options_menu', 9 );
         $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_twitter_settings' );
-        $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_input_examples' );
+        $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_pocket_settings' );
 
 		// Twitter Hooks
 		$this->loader->add_action( 'init', $twitter_includes, 'create_custom_post_type' );
 		$this->loader->add_action( 'cron_schedules', $twitter_includes, 'import_interval_minutes' );
 		$this->loader->add_action( 'init', $twitter_includes, 'set_twitter_schedule' );
 		$this->loader->add_action( 'wp', $twitter_includes, 'import_tweets_as_posts' );
+
+		// Pocket Hooks
+		// $this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
+		// $this->loader->add_action( 'init', $pocket_includes, 'set_twitter_schedule' );
+		// $this->loader->add_action( 'the_content', $pocket_includes, 'import_pocket_as_posts' );
 
 	}
 

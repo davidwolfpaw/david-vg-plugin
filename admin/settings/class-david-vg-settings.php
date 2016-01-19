@@ -63,7 +63,6 @@ class David_VG_Admin_Settings {
 			3.14159
 		);
 
-
 		add_submenu_page(
 			$this->plugin_name,
 			'DavidVG Settings',
@@ -94,6 +93,16 @@ class David_VG_Admin_Settings {
 
 	}
 
+	public function default_pocket_settings() {
+
+		$defaults = array(
+			'dvg_pocket_consumer_key'	=> '',
+		);
+
+		return  $defaults;
+
+	}
+
 
 	/**
 	 * Renders a simple page to display for the theme menu defined above.
@@ -111,15 +120,19 @@ class David_VG_Admin_Settings {
 				$active_tab = $_GET[ 'tab' ];
 			} else if( $active_tab == 'twitter_settings' ) {
 				$active_tab = 'twitter_settings';
+			} else if( $active_tab == 'pocket_settings' ) {
+				$active_tab = 'pocket_settings';
 			} else if( $active_tab == 'input_examples' ) {
 				$active_tab = 'input_examples';
 			} else {
 				$active_tab = 'twitter_settings';
-			} // end if/else ?>
+			}
+			?>
 
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=dvg-settings&tab=twitter_settings" class="nav-tab <?php echo $active_tab == 'twitter_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Twitter', 'david-vg' ); ?></a>
-				<a href="?page=dvg-settings&tab=input_examples" class="nav-tab <?php echo $active_tab == 'input_examples' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Input Examples', 'david-vg' ); ?></a>
+				<a href="?page=david-vg&tab=twitter_settings" class="nav-tab <?php echo $active_tab == 'twitter_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Twitter', 'david-vg' ); ?></a>
+				<a href="?page=david-vg&tab=pocket_settings" class="nav-tab <?php echo $active_tab == 'pocket_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Pocket', 'david-vg' ); ?></a>
+				<a href="?page=david-vg&tab=input_examples" class="nav-tab <?php echo $active_tab == 'input_examples' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Input Examples', 'david-vg' ); ?></a>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -130,12 +143,17 @@ class David_VG_Admin_Settings {
 					settings_fields( 'dvg_twitter_settings' );
 					do_settings_sections( 'dvg_twitter_settings' );
 
+				} elseif( $active_tab == 'pocket_settings' ) {
+
+					settings_fields( 'dvg_pocket_settings' );
+					do_settings_sections( 'dvg_pocket_settings' );
+
 				} else {
 
 					settings_fields( 'dvg_input_examples' );
 					do_settings_sections( 'dvg_input_examples' );
 
-				} // end if/else
+				}
 
 				submit_button();
 
@@ -149,9 +167,6 @@ class David_VG_Admin_Settings {
 
 	/**
 	 * This function provides a simple description for the Social Options page.
-	 *
-	 * It's called from the 'dvg_theme_initialize_twitter_settings' function by being passed as a parameter
-	 * in the add_settings_section function.
 	 */
 	public function twitter_settings_callback() {
 
@@ -159,25 +174,19 @@ class David_VG_Admin_Settings {
 		var_dump($options);
 		echo '<p>' . __( 'Modify Twitter Settings', 'david-vg' ) . '</p>';
 
-	} // end general_options_callback
+	}
 
-	/**
-	 * This function provides a simple description for the Input Examples page.
-	 *
-	 * It's called from the 'dvg_theme_initialize_input_examples_options' function by being passed as a parameter
-	 * in the add_settings_section function.
-	 */
-	public function input_examples_callback() {
+	public function pocket_settings_callback() {
 
-		$options = get_option('dvg_input_examples');
+		$options = get_option('dvg_pocket_settings');
 		var_dump($options);
-		echo '<p>' . __( 'Provides examples of the five basic element types.', 'david-vg' ) . '</p>';
+		echo '<p>' . __( 'Modify Pocket Settings', 'david-vg' ) . '</p>';
 
-	} // end general_options_callback
+	}
 
 
 	/**
-	 * Initializes the twitter settings by registering the Sections, Fields, and Settings.
+	 * Initializes the Twitter settings by registering the Sections, Fields, and Settings.
 	 *
 	 * This function is registered with the 'admin_init' hook.
 	 */
@@ -186,7 +195,7 @@ class David_VG_Admin_Settings {
 		if( false == get_option( 'dvg_twitter_settings' ) ) {
 			$default_array = $this->default_twitter_settings();
 			update_option( 'dvg_twitter_settings', $default_array );
-		} // end if
+		}
 
 		add_settings_section(
 			'twitter_settings_section',					// ID used to identify this section and with which to register options
@@ -266,42 +275,37 @@ class David_VG_Admin_Settings {
 
 
 	/**
-	 * Initializes the theme's input example by registering the Sections,
-	 * Fields, and Settings. This particular group of options is used to demonstration
-	 * validation and sanitization.
+	 * Initializes the Pocket settings by registering the Sections, Fields, and Settings.
 	 *
 	 * This function is registered with the 'admin_init' hook.
 	 */
-	public function initialize_input_examples() {
+	public function initialize_pocket_settings() {
 
-		if( false == get_option( 'dvg_input_examples' ) ) {
-			$default_array = $this->default_input_options();
-			update_option( 'dvg_input_examples', $default_array );
-		} // end if
-
+		if( false == get_option( 'dvg_pocket_settings' ) ) {
+			$default_array = $this->default_pocket_settings();
+			update_option( 'dvg_pocket_settings', $default_array );
+		}
 
 		add_settings_section(
-			'general_settings_section',			        // ID used to identify this section and with which to register options
-			__( 'Display Options', 'wppb-demo' ),		// Title to be displayed on the administration page
-			array( $this, 'general_options_callback'),	// Callback used to render the description of the section
-			'wppb_demo_display_options'		            // Page on which to add this section of options
+			'pocket_settings_section',
+			__( 'Pocket Settings', 'david-vg' ),
+			array( $this, 'pocket_settings_callback'),
+			'dvg_pocket_settings'
 		);
 
 		add_settings_field(
-			'show_header',						        // ID used to identify the field throughout the theme
-			__( 'Header', 'wppb-demo' ),				// The label to the left of the option interface element
-			array( $this, 'toggle_header_callback'),	// The name of the function responsible for rendering the option interface
-			'wppb_demo_display_options',	            // The page on which this option will be displayed
-			'general_settings_section',			        // The name of the section to which this field belongs
-			array(								        // The array of arguments to pass to the callback. In this case, just a description.
-				__( 'Activate this setting to display the header.', 'wppb-demo' ),
-			)
+			'dvg_pocket_consumer_key',
+			__( 'Pocket Consumer Key', 'david-vg' ),
+			array( $this, 'text_input_callback'),
+			'dvg_pocket_settings',
+			'pocket_settings_section',
+			array( 'label_for' => 'dvg_pocket_consumer_key', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_consumer_key' )
 		);
 
+
 		register_setting(
-			'dvg_input_examples',
-			'dvg_input_examples',
-			array( $this, 'validate_input_examples')
+			'dvg_pocket_settings',
+			'dvg_pocket_settings'
 		);
 
 	}
@@ -352,6 +356,9 @@ class David_VG_Admin_Settings {
 		echo $html;
 
 	} // end twitter_include_replies_callback
+
+
+
 
 
 

@@ -108,6 +108,11 @@ class David_VG_Admin {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/david-vg-admin.js', array( 'jquery' ), $this->version, false );
 
+        $dvg_data = array(
+            'ajaxurl' => admin_url( 'admin-ajax.php' ),
+        );
+        wp_localize_script( $this->plugin_name, 'dvgAdmin', $dvg_data );
+
 	}
 
 }

@@ -174,6 +174,10 @@ class David_VG {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Ajax
+		$this->loader->add_action( 'wp_ajax_pocket_generate_access_token', $plugin_settings, 'pocket_generate_access_token' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pocket_generate_access_token', $plugin_settings, 'pocket_generate_access_token' );
+
 		// Plugin Settings
 		// Priority of 9 on admin_menu to place settings at top of menu page
         $this->loader->add_action( 'admin_menu', $plugin_settings, 'setup_plugin_options_menu', 9 );

@@ -30,3 +30,24 @@
 	 */
 
 })( jQuery );
+
+
+
+function pocketGenerateAccessToken( consumerKey ) {
+
+    jQuery.ajax({
+        type: 'POST',
+        url: dvgAdmin.ajaxurl,
+        data: {
+            consumerKey: consumerKey,
+            action: 'pocket_generate_access_token'
+        },
+        success: function(data, textStatus, XMLHttpRequest) {
+        	alert("success!");
+        },
+        error: function(MLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+
+}

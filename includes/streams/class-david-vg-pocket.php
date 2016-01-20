@@ -147,7 +147,7 @@ class David_VG_Pocket {
         $post_settings_array = $this->get_post_settings_array();
 
         // Connect to Pocket OAuth
-        $connection = $this->connect_to_pocket( $post_settings_array );
+        // $connection = $this->connect_to_pocket( $post_settings_array );
 
         echo '<pre>';
 
@@ -155,18 +155,6 @@ class David_VG_Pocket {
 
         echo '</pre>';
 
-
-
-        // Retrieve the user's list of unread items (limit 5)
-        // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-        // $params = array(
-        //     'state' => 'unread',
-        //     'sort' => 'newest',
-        //     'detailType' => 'simple',
-        //     'count' => 5
-        // );
-        // $items = $connection->pocket->retrieve( $params, $user['access_token'] );
-        // print_r($items);
 
         // // Create $tweet_api_url from settings
         // $tweet_api_url = $this->create_tweet_api_url( $post_settings_array );

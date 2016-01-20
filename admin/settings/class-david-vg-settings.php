@@ -308,7 +308,7 @@ class David_VG_Admin_Settings {
 		add_settings_field(
 			'dvg_pocket_access_token',
 			__( 'Pocket Access Token', 'david-vg' ),
-			array( $this, 'text_input_callback'),
+			array( $this, 'pocket_access_token_callback'),
 			'dvg_pocket_settings',
 			'pocket_settings_section',
 			array( 'label_for' => 'dvg_pocket_access_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_access_token' )
@@ -374,40 +374,70 @@ class David_VG_Admin_Settings {
 		// Get existing option from database
 		$options = get_option( $option_group );
 
-		// Render the output
-		echo '<input type="text" id="' . $option_id . '" name="' . $option_name . ']" value="' . $options[$option_id] . '" />';
+		$consumer_key = $options['pocket_consumer_key'];
+
+        if ( empty( $consumer_key ) ) {
+            _e( 'Please fill in your Pocket App Consumer Key', 'david-vg' );
+        }
+
+        echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="" />&nbsp;&nbsp;';
+        echo '<input type="button" id="pocket_generate_access_token" class="button button-primary" value="Generate" onclick="pocketGenerateAccessToken(\'' . $consumer_key . '\');">';
 
 	}
 
 
+	public function pocket_generate_access_token( $consumer_key ) {
 
+		$params = array(
+            'consumerKey' => $consumer_key
+        );
 
-	/**
-	 * Sanitization callback
-	 *
-	 * @params	$input	The unsanitized collection of options.
-	 *
-	 * @returns			The collection of sanitized values.
-	 */
-	public function validate_input_examples( $input ) {
+        // $pocket = new Pocket( $params );
 
-		// Create our array for storing the validated options
-		$output = array();
+        // if ( isset( $_GET['authorized'] ) ) {
+        //     // Convert the requestToken into an accessToken
+        //     // Note that a requestToken can only be covnerted once
+        //     // Thus refreshing this page will generate an auth error
+        //     $user = $pocket->convertToken( $_GET['authorized'] );
+        //     /*
+        //      * $user['access_token']   the user's access token for calls to Pocket
+        //      * $user['username']   the user's pocket username
+        //      */
 
-		// Loop through each of the incoming options
-		foreach( $input as $key => $value ) {
-			// Check to see if the current option has a value. If so, process it.
+        //     // Set the user's access token to be used for all subsequent calls to the Pocket API
+        //     $access_token = $pocket->setAccessToken( $user['access_token'] );
 
-			if( isset( $input[$key] ) ) {
-				// Strip all HTML and PHP tags and properly handle quoted strings
-				$output[$key] = strip_tags( stripslashes( $input[ $key ] ) );
+        // } else {
+        //     // Attempt to detect the url of the current page to redirect back to
+        //     // Normally you wouldn't do this
+        //     $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
 
-			}
+        //     // Request a token from Pocket
+        //     $result = $pocket->requestToken($redirect);
+        //     /*
+        //      * $result['redirect_uri']     this is the URL to send the user to getpocket.com to authorize your app
+        //      * $result['request_token']    this is the request_token which you will need to use to
+        //      *                             obtain the user's access token after they have authorized your app
+        //     */
 
-		}
+        //     /*
+        //      * This is a hack to redirect back to us with the requestToken
+        //      * Normally you should save the 'request_token' in a session so it can be
+        //      * retrieved when the user is redirected back to you
+        //      */
+        //     $result['redirect_uri'] = str_replace(
+        //         urlencode('?authorized='),
+        //         urlencode('?authorized=' . $result['request_token']),
+        //         $result['redirect_uri']
+        //     );
+        //     // END HACK
 
-		// Return the array processing any additional functions filtered by this action
-		return apply_filters( 'validate_input_examples', $output, $input );
-	} // end validate_input_examples
+        //     header('Location: ' . $result['redirect_uri']);
+        // }
+
+        // return $items;
+
+	}
+
 
 }

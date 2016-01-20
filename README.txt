@@ -1,4 +1,6 @@
-=== Plugin Name ===
+NOTE: This is very much still in production. Not ready for use.
+
+=== Plugin Name(Still coming up with something awesome) ===
 Contributors: davidjlaietta
 Donate link: http://david.vg/
 Tags: post, twitter

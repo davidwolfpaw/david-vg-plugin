@@ -86,12 +86,13 @@ class David_VG_Admin_Settings {
 	public function default_twitter_settings() {
 
 		$defaults = array(
-			'dvg_twitter_consumer_key'	=> '',
-			'dvg_twitter_consumer_secret'	=> '',
-			'dvg_twitter_access_token'	=> '',
-			'dvg_twitter_access_token_secret'	=> '',
-			'dvg_twitter_exclude_retweets'	=> '1',
-			'dvg_twitter_exclude_replies'	=> '1',
+			'twitter_user'	=> '',
+			'twitter_consumer_key'	=> '',
+			'twitter_consumer_secret'	=> '',
+			'twitter_access_token'	=> '',
+			'twitter_access_token_secret'	=> '',
+			'twitter_exclude_retweets'	=> '1',
+			'twitter_exclude_replies'	=> '1',
 		);
 
 		return  $defaults;
@@ -101,7 +102,9 @@ class David_VG_Admin_Settings {
 	public function default_pocket_settings() {
 
 		$defaults = array(
-			'dvg_pocket_consumer_key'	=> '',
+			'pocket_consumer_key'	=> '',
+			'pocket_request_token'	=> '',
+			'pocket_access_token'	=> '',
 		);
 
 		return  $defaults;
@@ -210,66 +213,66 @@ class David_VG_Admin_Settings {
 		);
 
 		add_settings_field(
-			'dvg_twitter_user',
+			'twitter_user',
 			__( 'Twitter Username', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_user', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_user' )
+			array( 'label_for' => 'twitter_user', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_user' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_consumer_key',
+			'twitter_consumer_key',
 			__( 'Twitter Consumer Key', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_consumer_key', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_consumer_key' )
+			array( 'label_for' => 'twitter_consumer_key', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_consumer_key' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_consumer_secret',
+			'twitter_consumer_secret',
 			__( 'Twitter Consumer Secret', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_consumer_secret', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_consumer_secret' )
+			array( 'label_for' => 'twitter_consumer_secret', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_consumer_secret' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_access_token',
+			'twitter_access_token',
 			__( 'Twitter Access Token', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_access_token', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_access_token' )
+			array( 'label_for' => 'twitter_access_token', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_access_token' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_access_token_secret',
+			'twitter_access_token_secret',
 			__( 'Twitter Access Token Secret', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_access_token_secret', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_access_token_secret' )
+			array( 'label_for' => 'twitter_access_token_secret', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_access_token_secret' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_exclude_retweets',
+			'twitter_exclude_retweets',
 			__( 'Exclude Retweets?', 'david-vg' ),
 			array( $this, 'checkbox_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_exclude_retweets', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_retweets', 'option_description' => 'Should retweets be excluded?' )
+			array( 'label_for' => 'twitter_exclude_retweets', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_retweets', 'option_description' => 'Should retweets be excluded?' )
 		);
 
 		add_settings_field(
-			'dvg_twitter_exclude_replies',
+			'twitter_exclude_replies',
 			__( 'Exclude Replies?', 'david-vg' ),
 			array( $this, 'checkbox_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'dvg_twitter_exclude_replies', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_replies', 'option_description' => 'Should @replies be excluded?' )
+			array( 'label_for' => 'twitter_exclude_replies', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_replies', 'option_description' => 'Should @replies be excluded?' )
 		);
 
 		register_setting(
@@ -300,21 +303,30 @@ class David_VG_Admin_Settings {
 		);
 
 		add_settings_field(
-			'dvg_pocket_consumer_key',
+			'pocket_consumer_key',
 			__( 'Pocket Consumer Key', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_pocket_settings',
 			'pocket_settings_section',
-			array( 'label_for' => 'dvg_pocket_consumer_key', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_consumer_key' )
+			array( 'label_for' => 'pocket_consumer_key', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_consumer_key' )
 		);
 
 		add_settings_field(
-			'dvg_pocket_access_token',
+			'pocket_request_token',
+			__( 'Pocket Request Token', 'david-vg' ),
+			array( $this, 'pocket_request_token_callback'),
+			'dvg_pocket_settings',
+			'pocket_settings_section',
+			array( 'label_for' => 'pocket_request_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_request_token' )
+		);
+
+		add_settings_field(
+			'pocket_access_token',
 			__( 'Pocket Access Token', 'david-vg' ),
 			array( $this, 'pocket_access_token_callback'),
 			'dvg_pocket_settings',
 			'pocket_settings_section',
-			array( 'label_for' => 'dvg_pocket_access_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_access_token' )
+			array( 'label_for' => 'pocket_access_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_access_token' )
 		);
 
 
@@ -367,7 +379,7 @@ class David_VG_Admin_Settings {
 	}
 
 
-	public function pocket_access_token_callback( $text_input ) {
+	public function pocket_request_token_callback( $text_input ) {
 
 		// Get arguments from setting
 		$option_group = $text_input['option_group'];
@@ -389,91 +401,90 @@ class David_VG_Admin_Settings {
 	}
 
 
-	public function pocket_generate_request_token() {
+	public function pocket_access_token_callback( $text_input ) {
 
-		// $params = array(
-  //           'consumerKey' => $_POST['consumerKey'],
-  //       );
+		// Get arguments from setting
+		$option_group = $text_input['option_group'];
+		$option_id = $text_input['option_id'];
+		$option_name = $option_group . '[' . $option_id . ']';
 
-  //       $pocket = new Pocket( $params );
+		// Get existing option from database
+		$options = get_option( $option_group );
 
-  //       // Attempt to detect the url of the current page to redirect back to
-  //       $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
+		$request_token = $options['pocket_request_token'];
 
-  //       // Request a token from Pocket
-  //       $result = $pocket->requestToken($redirect);
+        echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="' . $options[$option_id] . '" />&nbsp;&nbsp;';
+        echo '<input type="button" id="pocket_generate_access_token" class="button button-primary" value="Generate" onclick="pocketGenerateAccessToken(\'' . $request_token . '\');">';
 
-		// if ( $result['request_token'] ) {
-  //           // Convert the requestToken into an accessToken
-  //           // Note that a requestToken can only be converted once
-  //           // Thus refreshing this page will generate an auth error
-  //           $user = $pocket->convertToken( $result['request_token'] );
-  //           /*
-  //            * $user['access_token']   the user's access token for calls to Pocket
-  //            * $user['username']   the user's pocket username
-  //            */
-
-  //           // Set the user's access token to be used for all subsequent calls to the Pocket API
-  //           $pocket->setAccessToken( $user['access_token'] );
-
-  //       }
+	}
 
 
-  //       // $access_token = $this->pocket_generate_access_token( $result['request_token'] );
 
-  //       // $user = $pocket->convertToken( $result['request_token'] );
+   	public function pocket_generate_request_token() {
 
-		// // $access_token = $pocket->setAccessToken( $user['access_token'] );
+		$params = array(
+            'consumerKey' => $_POST['consumerKey'],
+        );
 
-  //       // return $result['request_token'];
+        $pocket = new Pocket( $params );
 
-  //       var_dump($user);
+        // Attempt to detect the url of the current page to redirect back to
+        $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
+
+        // Request a token from Pocket
+        $result = $pocket->requestToken($redirect);
+
+        echo $result['request_token'];
+
+	}
+
+	public function pocket_generate_access_token() {
+
+		$request_token = $_POST['requestToken'];
 
 		$options = get_option( 'dvg_pocket_settings' );
-
 		$consumer_key = $options['pocket_consumer_key'];
 
-		$redirect_uri = plugins_url( '/david-vg/includes/streams/pocket/pocket_callback.php' );
+		$params = array(
+            'consumerKey' => $consumer_key,
+        );
 
-		// //don't edit this until you've authenticated with pocket.
-		// $access_token = 'YOUR_ACCESS_TOKEN_HERE';
+        $pocket = new Pocket( $params );
 
-		/* The first step in getting connected! */
-		// first, obtain a request token
-		$url = 'https://getpocket.com/v3/oauth/request';
-		$data = array(
-			'consumer_key' => $consumer_key,
-			'redirect_uri' => $redirect_uri
-		);
-		$options = array(
-			'http' => array(
-				'method'  => 'POST',
-				'content' => http_build_query($data)
-			)
-		);
-		$context  = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
-		// our $result contains our request token
-		$code = explode('=',$result);
-		$request_token = $code[1];
+		if ( $request_token ) {
+            // Convert the requestToken into an accessToken
+            // Note that a requestToken can only be converted once
+            // Thus refreshing this page will generate an auth error
+            // $user = $pocket->convertToken( $request_token );
 
-		// now we need to redirect the user to pocket
-		wp_redirect( 'https://getpocket.com/auth/authorize?request_token=' . $request_token . '&redirect_uri=' . $redirect_uri . '?request_token=' . $request_token );
+            // $user['access_token']   the user's access token for calls to Pocket
+            // $user['username']   the user's pocket username
 
-		// var_dump($request_token);
+            // Set the user's access token to be used for all subsequent calls to the Pocket API
+            // $pocket->setAccessToken( $user['access_token'] );
 
-	}
+        }
 
+        // $user = $pocket->convertToken( $result['request_token'] );
 
-	public function pocket_generate_access_token( $request_token ) {
+		// $access_token = $pocket->setAccessToken( $user['access_token'] );
 
-		$user = $pocket->convertToken( $request_token );
+        // echo $result['request_token'];
 
-		$access_token = $pocket->setAccessToken( $user['access_token'] );
-
-		return $access_token;
+        var_dump($request_token);
 
 	}
+
+
+	// public function pocket_generate_access_token( $request_token ) {
+
+	// 	$user = $pocket->convertToken( $request_token );
+
+	// 	$access_token = $pocket->setAccessToken( $user['access_token'] );
+
+	// 	return $access_token;
+
+	// }
 
 
 }

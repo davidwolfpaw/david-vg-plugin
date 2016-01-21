@@ -127,7 +127,7 @@ class David_VG_Pocket {
 
 
     //Check and Schedule Cron job
-    public function set_twitter_schedule() {
+    public function set_pocket_schedule() {
 
         if (!wp_next_scheduled('import_pocket_as_posts')) {
             wp_schedule_event(time(), 'five_minutes', 'import_pocket_as_posts');
@@ -147,35 +147,23 @@ class David_VG_Pocket {
         $post_settings_array = $this->get_post_settings_array();
 
         // Connect to Pocket OAuth
-        // $connection = $this->connect_to_pocket( $post_settings_array );
+        $connection = $this->connect_to_pocket( $post_settings_array );
 
+        // // Retrieve the user's list of unread items (limit 5)
+        // // http://getpocket.com/developer/docs/v3/retrieve for a list of params
+        // $args = array(
+        //     'state' => 'unread',
+        //     'sort' => 'newest',
+        //     'detailType' => 'simple',
+        //     'count' => 5
+        // );
+        // $items = $pocket->retrieve( $args, $post_settings_array['pocket_access_token'] );
 
-        $params = array(
-            'consumerKey' => $post_settings_array['consumer_key'],
-            'accessToken' => $post_settings_array['access_token']
-        );
+        // echo '<pre>';
 
-        if ( empty( $params['consumerKey'] ) ) {
-            die( __( 'Please fill in your Pocket App Consumer Key', 'david-vg' ) );
-        }
+        // var_dump($post_settings_array);
 
-        $pocket = new Pocket( $params );
-
-        // Retrieve the user's list of unread items (limit 5)
-        // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-        $args = array(
-            'state' => 'unread',
-            'sort' => 'newest',
-            'detailType' => 'simple',
-            'count' => 5
-        );
-        $items = $pocket->retrieve( $args, $post_settings_array['pocket_access_token'] );
-
-        echo '<pre>';
-
-        var_dump($post_settings_array);
-
-        echo '</pre>';
+        // echo '</pre>';
 
 
         // // Create $tweet_api_url from settings
@@ -235,72 +223,48 @@ class David_VG_Pocket {
     }
 
 
-    public function connect_to_pocket( $post_settings_array ) {
+    public function connect_to_pocket(  ) {
+
+        // Get settings from Pocket settings page
+        $post_settings_array = $this->get_post_settings_array();
 
         $params = array(
-            'consumerKey' => $post_settings_array['consumer_key'] // fill in your Pocket App Consumer Key
+            'consumerKey' => $post_settings_array['consumer_key'],
+            // 'accessToken' => $post_settings_array['access_token'],
         );
-
-        if ( empty( $params['consumerKey'] ) ) {
-            die( __( 'Please fill in your Pocket App Consumer Key', 'david-vg' ) );
-        }
 
         $pocket = new Pocket( $params );
 
-        if ( isset( $_GET['authorized'] ) ) {
+        // if ( isset( $_GET['authorized'] ) ) {
             // Convert the requestToken into an accessToken
             // Note that a requestToken can only be covnerted once
             // Thus refreshing this page will generate an auth error
-            $user = $pocket->convertToken( $_GET['authorized'] );
+            $user = $pocket->convertToken( $post_settings_array['request_token'] );
             /*
              * $user['access_token']   the user's access token for calls to Pocket
              * $user['username']   the user's pocket username
              */
 
+            // var_dump($post_settings_array['request_token']);
+
             // Set the user's access token to be used for all subsequent calls to the Pocket API
-            $pocket->setAccessToken( $user['access_token'] );
+            // $pocket->setAccessToken( $user['access_token'] );
 
 
-            // Retrieve the user's list of unread items (limit 5)
-            // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-            $params = array(
-                'state' => 'unread',
-                'sort' => 'newest',
-                'detailType' => 'simple',
-                'count' => 5
-            );
-            $items = $pocket->retrieve( $params, $user['access_token'] );
+            // // Retrieve the user's list of unread items (limit 5)
+            // // http://getpocket.com/developer/docs/v3/retrieve for a list of params
+            // $params = array(
+            //     'state' => 'unread',
+            //     'sort' => 'newest',
+            //     'detailType' => 'simple',
+            //     'count' => 5
+            // );
+            // $items = $pocket->retrieve( $params, $user['access_token'] );
             // print_r($items);
 
-        } else {
-            // Attempt to detect the url of the current page to redirect back to
-            // Normally you wouldn't do this
-            $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
+        // }
 
-            // Request a token from Pocket
-            $result = $pocket->requestToken($redirect);
-            /*
-             * $result['redirect_uri']     this is the URL to send the user to getpocket.com to authorize your app
-             * $result['request_token']    this is the request_token which you will need to use to
-             *                             obtain the user's access token after they have authorized your app
-            */
-
-            /*
-             * This is a hack to redirect back to us with the requestToken
-             * Normally you should save the 'request_token' in a session so it can be
-             * retrieved when the user is redirected back to you
-             */
-            $result['redirect_uri'] = str_replace(
-                urlencode('?authorized='),
-                urlencode('?authorized=' . $result['request_token']),
-                $result['redirect_uri']
-            );
-            // END HACK
-
-            header('Location: ' . $result['redirect_uri']);
-        }
-
-        return $items;
+        // return $items;
 
     }
 
@@ -398,7 +362,7 @@ class David_VG_Pocket {
         $post_settings_array = array();
 
         $post_settings_array['consumer_key'] = get_option('dvg_pocket_settings')['pocket_consumer_key'];
-        $post_settings_array['access_token'] = get_option('dvg_pocket_settings')['pocket_access_token'];
+        $post_settings_array['request_token'] = get_option('dvg_pocket_settings')['pocket_request_token'];
 
         return $post_settings_array;
 

@@ -44,8 +44,30 @@ function pocketGenerateRequestToken( consumerKey ) {
         },
         success: function(data, textStatus, XMLHttpRequest) {
         	// return data;
-        	// jQuery('#pocket_access_token').val(data);
+        	jQuery('#pocket_request_token').val(data);
         	// alert( data );
+        },
+        error: function(MLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+
+}
+
+
+function pocketGenerateAccessToken( requestToken ) {
+
+    jQuery.ajax({
+        type: 'POST',
+        url: dvgAdmin.ajaxurl,
+        data: {
+            requestToken: requestToken,
+            action: 'pocket_generate_access_token'
+        },
+        success: function(data, textStatus, XMLHttpRequest) {
+        	// return data;
+        	// jQuery('#pocket_access_token').val(data);
+        	alert( data );
         },
         error: function(MLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown);

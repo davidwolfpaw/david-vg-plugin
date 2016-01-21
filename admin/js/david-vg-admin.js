@@ -45,7 +45,7 @@ function pocketGenerateRequestToken( consumerKey ) {
         success: function(data, textStatus, XMLHttpRequest) {
         	// return data;
         	// jQuery('#pocket_access_token').val(data);
-        	alert( data );
+        	// alert( data );
         },
         error: function(MLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown);

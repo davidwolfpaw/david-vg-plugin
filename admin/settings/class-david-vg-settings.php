@@ -391,43 +391,76 @@ class David_VG_Admin_Settings {
 
 	public function pocket_generate_request_token() {
 
-		$params = array(
-            'consumerKey' => $_POST['consumerKey'],
-        );
+		// $params = array(
+  //           'consumerKey' => $_POST['consumerKey'],
+  //       );
 
-        $pocket = new Pocket( $params );
+  //       $pocket = new Pocket( $params );
 
-        // Attempt to detect the url of the current page to redirect back to
-        $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
+  //       // Attempt to detect the url of the current page to redirect back to
+  //       $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
 
-        // Request a token from Pocket
-        $result = $pocket->requestToken($redirect);
+  //       // Request a token from Pocket
+  //       $result = $pocket->requestToken($redirect);
 
-		if ( $result['request_token'] ) {
-            // Convert the requestToken into an accessToken
-            // Note that a requestToken can only be converted once
-            // Thus refreshing this page will generate an auth error
-            $user = $pocket->convertToken( $result['request_token'] );
-            /*
-             * $user['access_token']   the user's access token for calls to Pocket
-             * $user['username']   the user's pocket username
-             */
+		// if ( $result['request_token'] ) {
+  //           // Convert the requestToken into an accessToken
+  //           // Note that a requestToken can only be converted once
+  //           // Thus refreshing this page will generate an auth error
+  //           $user = $pocket->convertToken( $result['request_token'] );
+  //           /*
+  //            * $user['access_token']   the user's access token for calls to Pocket
+  //            * $user['username']   the user's pocket username
+  //            */
 
-            // Set the user's access token to be used for all subsequent calls to the Pocket API
-            $pocket->setAccessToken( $user['access_token'] );
+  //           // Set the user's access token to be used for all subsequent calls to the Pocket API
+  //           $pocket->setAccessToken( $user['access_token'] );
 
-        }
+  //       }
 
 
-        // $access_token = $this->pocket_generate_access_token( $result['request_token'] );
+  //       // $access_token = $this->pocket_generate_access_token( $result['request_token'] );
 
-        // $user = $pocket->convertToken( $result['request_token'] );
+  //       // $user = $pocket->convertToken( $result['request_token'] );
 
-		// $access_token = $pocket->setAccessToken( $user['access_token'] );
+		// // $access_token = $pocket->setAccessToken( $user['access_token'] );
 
-        // return $result['request_token'];
+  //       // return $result['request_token'];
 
-        var_dump($user);
+  //       var_dump($user);
+
+		$options = get_option( 'dvg_pocket_settings' );
+
+		$consumer_key = $options['pocket_consumer_key'];
+
+		$redirect_uri = plugins_url( '/david-vg/includes/streams/pocket/pocket_callback.php' );
+
+		// //don't edit this until you've authenticated with pocket.
+		// $access_token = 'YOUR_ACCESS_TOKEN_HERE';
+
+		/* The first step in getting connected! */
+		// first, obtain a request token
+		$url = 'https://getpocket.com/v3/oauth/request';
+		$data = array(
+			'consumer_key' => $consumer_key,
+			'redirect_uri' => $redirect_uri
+		);
+		$options = array(
+			'http' => array(
+				'method'  => 'POST',
+				'content' => http_build_query($data)
+			)
+		);
+		$context  = stream_context_create($options);
+		$result = file_get_contents($url, false, $context);
+		// our $result contains our request token
+		$code = explode('=',$result);
+		$request_token = $code[1];
+
+		// now we need to redirect the user to pocket
+		wp_redirect( 'https://getpocket.com/auth/authorize?request_token=' . $request_token . '&redirect_uri=' . $redirect_uri . '?request_token=' . $request_token );
+
+		// var_dump($request_token);
 
 	}
 

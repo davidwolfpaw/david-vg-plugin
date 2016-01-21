@@ -163,9 +163,6 @@ class David_VG_Twitter {
 
         // Now let's grab some tweets!
         $tweets = $connection->get($tweet_api_url);
-        if( $post_settings_array['tweet_from'] == 'Search Query' ) {
-            $tweets = $tweets->statuses;
-        }
 
         // Let's play with the tweets!
         if( $tweets ){
@@ -242,7 +239,7 @@ class David_VG_Twitter {
     public function create_tweet_api_url( $post_settings_array ){
 
         // Create $tweet_api_url from settings
-        $tweet_api_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $post_settings_array['twitter_user'] . '&count=10';
+        $tweet_api_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $post_settings_array['twitteruser'] . '&count=10';
 
         if( $post_settings_array['exclude_retweets'] == 1 ) {
             $tweet_api_url .= '&include_rts=false';

@@ -175,8 +175,8 @@ class David_VG {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		// Ajax
-		$this->loader->add_action( 'wp_ajax_pocket_generate_access_token', $plugin_settings, 'pocket_generate_access_token' );
-		$this->loader->add_action( 'wp_ajax_nopriv_pocket_generate_access_token', $plugin_settings, 'pocket_generate_access_token' );
+		$this->loader->add_action( 'wp_ajax_pocket_generate_request_token', $plugin_settings, 'pocket_generate_request_token' );
+		$this->loader->add_action( 'wp_ajax_nopriv_pocket_generate_request_token', $plugin_settings, 'pocket_generate_request_token' );
 
 		// Plugin Settings
 		// Priority of 9 on admin_menu to place settings at top of menu page
@@ -193,7 +193,7 @@ class David_VG {
 		// Pocket Hooks
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		// $this->loader->add_action( 'init', $pocket_includes, 'set_twitter_schedule' );
-		$this->loader->add_action( 'wp', $pocket_includes, 'import_pocket_as_posts' );
+		$this->loader->add_action( 'the_content', $pocket_includes, 'import_pocket_as_posts' );
 
 	}
 

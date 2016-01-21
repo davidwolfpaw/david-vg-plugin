@@ -149,9 +149,31 @@ class David_VG_Pocket {
         // Connect to Pocket OAuth
         // $connection = $this->connect_to_pocket( $post_settings_array );
 
+
+        $params = array(
+            'consumerKey' => $post_settings_array['consumer_key'],
+            'accessToken' => $post_settings_array['access_token']
+        );
+
+        if ( empty( $params['consumerKey'] ) ) {
+            die( __( 'Please fill in your Pocket App Consumer Key', 'david-vg' ) );
+        }
+
+        $pocket = new Pocket( $params );
+
+        // Retrieve the user's list of unread items (limit 5)
+        // http://getpocket.com/developer/docs/v3/retrieve for a list of params
+        $args = array(
+            'state' => 'unread',
+            'sort' => 'newest',
+            'detailType' => 'simple',
+            'count' => 5
+        );
+        $items = $pocket->retrieve( $args, $post_settings_array['pocket_access_token'] );
+
         echo '<pre>';
 
-        var_dump($connection);
+        var_dump($post_settings_array);
 
         echo '</pre>';
 
@@ -216,7 +238,7 @@ class David_VG_Pocket {
     public function connect_to_pocket( $post_settings_array ) {
 
         $params = array(
-            'consumerKey' => $post_settings_array['consumerkey'] // fill in your Pocket App Consumer Key
+            'consumerKey' => $post_settings_array['consumer_key'] // fill in your Pocket App Consumer Key
         );
 
         if ( empty( $params['consumerKey'] ) ) {
@@ -375,7 +397,8 @@ class David_VG_Pocket {
 
         $post_settings_array = array();
 
-        $post_settings_array['consumerkey'] = get_option('dvg_pocket_settings')['pocket_consumer_key'];
+        $post_settings_array['consumer_key'] = get_option('dvg_pocket_settings')['pocket_consumer_key'];
+        $post_settings_array['access_token'] = get_option('dvg_pocket_settings')['pocket_access_token'];
 
         return $post_settings_array;
 

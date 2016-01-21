@@ -383,74 +383,62 @@ class David_VG_Admin_Settings {
             _e( 'Please fill in your Pocket App Consumer Key', 'david-vg' );
         }
 
-        echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="" />&nbsp;&nbsp;';
-        echo '<input type="button" id="pocket_generate_access_token" class="button button-primary" value="Generate" onclick="pocketGenerateAccessToken(\'' . $consumer_key . '\');">';
+        echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="' . $options[$option_id] . '" />&nbsp;&nbsp;';
+        echo '<input type="button" id="pocket_generate_request_token" class="button button-primary" value="Generate" onclick="pocketGenerateRequestToken(\'' . $consumer_key . '\');">';
 
 	}
 
 
-	public function pocket_generate_access_token() {
+	public function pocket_generate_request_token() {
 
 		$params = array(
             'consumerKey' => $_POST['consumerKey'],
-            // 'consumerKey' => '50361-b51b548eed15a771bfda7136'
         );
 
         $pocket = new Pocket( $params );
 
-        if ( isset( $_GET['authorized'] ) ) {
+        // Attempt to detect the url of the current page to redirect back to
+        $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
+
+        // Request a token from Pocket
+        $result = $pocket->requestToken($redirect);
+
+		if ( $result['request_token'] ) {
             // Convert the requestToken into an accessToken
-            // Note that a requestToken can only be covnerted once
+            // Note that a requestToken can only be converted once
             // Thus refreshing this page will generate an auth error
-            $user = $pocket->convertToken( $_GET['authorized'] );
+            $user = $pocket->convertToken( $result['request_token'] );
             /*
              * $user['access_token']   the user's access token for calls to Pocket
              * $user['username']   the user's pocket username
              */
 
             // Set the user's access token to be used for all subsequent calls to the Pocket API
-            $access_token = $pocket->setAccessToken( $user['access_token'] );
+            $pocket->setAccessToken( $user['access_token'] );
 
-        	return $access_token;
-
-
-            // // Retrieve the user's list of unread items (limit 5)
-            // // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-            // $params = array(
-            //     'state' => 'unread',
-            //     'sort' => 'newest',
-            //     'detailType' => 'simple',
-            //     'count' => 5
-            // );
-            // $items = $pocket->retrieve( $params, $user['access_token'] );
-
-        } else {
-            // Attempt to detect the url of the current page to redirect back to
-            // Normally you wouldn't do this
-            $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
-
-            // Request a token from Pocket
-            $result = $pocket->requestToken($redirect);
-            /*
-             * $result['redirect_uri']     this is the URL to send the user to getpocket.com to authorize your app
-             * $result['request_token']    this is the request_token which you will need to use to
-             *                             obtain the user's access token after they have authorized your app
-            */
-
-            /*
-             * This is a hack to redirect back to us with the requestToken
-             * Normally you should save the 'request_token' in a session so it can be
-             * retrieved when the user is redirected back to you
-             */
-            $result['redirect_uri'] = str_replace(
-                urlencode('?authorized='),
-                urlencode('?authorized=' . $result['request_token']),
-                $result['redirect_uri']
-            );
-            // END HACK
-
-            header('Location: ' . $result['redirect_uri']);
         }
+
+
+        // $access_token = $this->pocket_generate_access_token( $result['request_token'] );
+
+        // $user = $pocket->convertToken( $result['request_token'] );
+
+		// $access_token = $pocket->setAccessToken( $user['access_token'] );
+
+        // return $result['request_token'];
+
+        var_dump($user);
+
+	}
+
+
+	public function pocket_generate_access_token( $request_token ) {
+
+		$user = $pocket->convertToken( $request_token );
+
+		$access_token = $pocket->setAccessToken( $user['access_token'] );
+
+		return $access_token;
 
 	}
 

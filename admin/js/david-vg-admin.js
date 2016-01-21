@@ -33,21 +33,22 @@
 
 
 
-function pocketGenerateAccessToken( consumerKey ) {
+function pocketGenerateRequestToken( consumerKey ) {
 
     jQuery.ajax({
         type: 'POST',
         url: dvgAdmin.ajaxurl,
         data: {
             consumerKey: consumerKey,
-            action: 'pocket_generate_access_token'
+            action: 'pocket_generate_request_token'
         },
         success: function(data, textStatus, XMLHttpRequest) {
-        	// return consumerKey;
-        	alert( access_token );
+        	// return data;
+        	// jQuery('#pocket_access_token').val(data);
+        	alert( data );
         },
         error: function(MLHttpRequest, textStatus, errorThrown) {
-            // alert(errorThrown);
+            alert(errorThrown);
         }
     });
 

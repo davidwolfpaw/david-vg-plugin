@@ -10,7 +10,7 @@
  * @subpackage David_VG/includes
  */
 
-// Require Twitter OAuth package
+// Require Pocket OAuth package
 require_once plugin_dir_path( __FILE__ ) . 'pocket/Pocket.php';
 
 /**

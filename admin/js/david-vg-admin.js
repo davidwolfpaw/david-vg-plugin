@@ -43,10 +43,11 @@ function pocketGenerateAccessToken( consumerKey ) {
             action: 'pocket_generate_access_token'
         },
         success: function(data, textStatus, XMLHttpRequest) {
-        	alert("success!");
+        	// return consumerKey;
+        	alert( access_token );
         },
         error: function(MLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            // alert(errorThrown);
         }
     });
 

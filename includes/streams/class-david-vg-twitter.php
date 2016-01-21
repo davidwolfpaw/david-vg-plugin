@@ -342,7 +342,8 @@ class David_VG_Twitter {
 
         // Add Featured Image to Post
         $tweet_media = $tweet->entities->media;
-        if($tweet_media && $insert_id){
+
+        if( $tweet_media && $insert_id ) {
 
             $tweet_media_url = $tweet_media[0]->media_url; // Define the image URL here
             $upload_dir = wp_upload_dir(); // Set upload folder
@@ -386,11 +387,12 @@ class David_VG_Twitter {
 
     }
 
+    // TODO - Update
     public function set_publish_time( $tweet ) {
 
         // Set tweet time as post publish date
-        $tweet_created_at = strtotime($tweet->created_at);
-        $dvg_set_timezone = get_option('dvg_wp_time_as_published_date');
+        $tweet_created_at = strtotime( $tweet->created_at );
+        $dvg_set_timezone = get_option( 'dvg_wp_time_as_published_date' );
         $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
 
         if($dvg_set_timezone=='yes'){

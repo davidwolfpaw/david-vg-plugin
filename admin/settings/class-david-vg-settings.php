@@ -91,8 +91,8 @@ class David_VG_Admin_Settings {
 			'twitter_consumer_secret'	=> '',
 			'twitter_access_token'	=> '',
 			'twitter_access_token_secret'	=> '',
-			'twitter_exclude_retweets'	=> '1',
-			'twitter_exclude_replies'	=> '1',
+			'twitter_exclude_retweets'	=> 'checked',
+			'twitter_exclude_replies'	=> 'checked',
 		);
 
 		return  $defaults;
@@ -179,7 +179,6 @@ class David_VG_Admin_Settings {
 	public function twitter_settings_callback() {
 
 		$options = get_option('dvg_twitter_settings');
-		var_dump($options);
 		echo '<p>' . __( 'Modify Twitter Settings', 'david-vg' ) . '</p>';
 
 	}
@@ -263,7 +262,7 @@ class David_VG_Admin_Settings {
 			array( $this, 'checkbox_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'twitter_exclude_retweets', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_retweets', 'option_description' => 'Should retweets be excluded?' )
+			array( 'label_for' => 'twitter_exclude_retweets', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_exclude_retweets', 'option_description' => 'Should retweets be excluded?' )
 		);
 
 		add_settings_field(
@@ -272,7 +271,7 @@ class David_VG_Admin_Settings {
 			array( $this, 'checkbox_input_callback'),
 			'dvg_twitter_settings',
 			'twitter_settings_section',
-			array( 'label_for' => 'twitter_exclude_replies', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'exclude_replies', 'option_description' => 'Should @replies be excluded?' )
+			array( 'label_for' => 'twitter_exclude_replies', 'option_group' => 'dvg_twitter_settings', 'option_id' => 'twitter_exclude_replies', 'option_description' => 'Should @replies be excluded?' )
 		);
 
 		register_setting(
@@ -312,27 +311,37 @@ class David_VG_Admin_Settings {
 		);
 
 		add_settings_field(
-			'pocket_request_token',
-			__( 'Pocket Request Token', 'david-vg' ),
-			array( $this, 'pocket_request_token_callback'),
-			'dvg_pocket_settings',
-			'pocket_settings_section',
-			array( 'label_for' => 'pocket_request_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_request_token' )
-		);
-
-		add_settings_field(
 			'pocket_access_token',
 			__( 'Pocket Access Token', 'david-vg' ),
-			array( $this, 'pocket_access_token_callback'),
+			array( $this, 'text_input_callback'),
 			'dvg_pocket_settings',
 			'pocket_settings_section',
 			array( 'label_for' => 'pocket_access_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_access_token' )
 		);
 
+		// add_settings_field(
+		// 	'pocket_request_token',
+		// 	__( 'Pocket Request Token', 'david-vg' ),
+		// 	array( $this, 'pocket_request_token_callback'),
+		// 	'dvg_pocket_settings',
+		// 	'pocket_settings_section',
+		// 	array( 'label_for' => 'pocket_request_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_request_token' )
+		// );
+
+		// add_settings_field(
+		// 	'pocket_access_token',
+		// 	__( 'Pocket Access Token', 'david-vg' ),
+		// 	array( $this, 'pocket_access_token_callback'),
+		// 	'dvg_pocket_settings',
+		// 	'pocket_settings_section',
+		// 	array( 'label_for' => 'pocket_access_token', 'option_group' => 'dvg_pocket_settings', 'option_id' => 'pocket_access_token' )
+		// );
+
 
 		register_setting(
 			'dvg_pocket_settings',
-			'dvg_pocket_settings'
+			'dvg_pocket_settings',
+			array( $this, 'validate_inputs' )
 		);
 
 	}
@@ -371,120 +380,32 @@ class David_VG_Admin_Settings {
 		$options = get_option( $option_group );
 
 		// Render the output
-		$html = '<input type="checkbox" id="' . $option_id . '" name="' . $option_name . '" value="1" ' . checked( 1, $options[$option_id], false ) . ' />';
-		$html .= '<label for="' . $option_id . '">' . $option_description . '</label>';
+		$input = '';
+		$input .= '<input type="checkbox" id="' . $option_id . '" name="' . $option_name . '" value="1" ' . checked( isset($options[$option_id]), 1, false ) . ' />';
+		$input .= '<label for="' . $option_id . '">' . $option_description . '</label>';
 
-		echo $html;
-
-	}
-
-
-	public function pocket_request_token_callback( $text_input ) {
-
-		// Get arguments from setting
-		$option_group = $text_input['option_group'];
-		$option_id = $text_input['option_id'];
-		$option_name = $option_group . '[' . $option_id . ']';
-
-		// Get existing option from database
-		$options = get_option( $option_group );
-
-		$consumer_key = $options['pocket_consumer_key'];
-
-        if ( empty( $consumer_key ) ) {
-            _e( 'Please fill in your Pocket App Consumer Key', 'david-vg' );
-        }
-
-        echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="' . $options[$option_id] . '" />&nbsp;&nbsp;';
-        echo '<input type="button" id="pocket_generate_request_token" class="button button-primary" value="Generate" onclick="pocketGenerateRequestToken(\'' . $consumer_key . '\');">';
+		echo $input;
 
 	}
 
 
-	public function pocket_access_token_callback( $text_input ) {
-
-		// Get arguments from setting
-		$option_group = $text_input['option_group'];
-		$option_id = $text_input['option_id'];
-		$option_name = $option_group . '[' . $option_id . ']';
-
-		// Get existing option from database
-		$options = get_option( $option_group );
-
-		$request_token = $options['pocket_request_token'];
-
-        echo '<input type="text" id="' . $option_id . '" name="' . $option_name . '" value="' . $options[$option_id] . '" />&nbsp;&nbsp;';
-        echo '<input type="button" id="pocket_generate_access_token" class="button button-primary" value="Generate" onclick="pocketGenerateAccessToken(\'' . $request_token . '\');">';
-
+	// Validate inputs
+	public function validate_inputs( $input ) {
+		// Create our array for storing the validated options
+		$output = array();
+		// Loop through each of the incoming options
+		foreach( $input as $key => $value ) {
+			// Check to see if the current option has a value. If so, process it.
+			if( isset( $input[$key] ) ) {
+				// Strip all HTML and PHP tags and properly handle quoted strings
+				$output[$key] = strip_tags( stripslashes( $input[ $key ] ) );
+			}
+			// elseif( $input[$key] === NULL ) {
+			// 	$output[$key] = '';
+			// }
+		} // end foreach
+		// Return the array processing any additional functions filtered by this action
+		return apply_filters( 'validate_inputs', $output, $input );
 	}
-
-
-
-   	public function pocket_generate_request_token() {
-
-		$params = array(
-            'consumerKey' => $_POST['consumerKey'],
-        );
-
-        $pocket = new Pocket( $params );
-
-        // Attempt to detect the url of the current page to redirect back to
-        $redirect = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) ? 'https' : 'http') . '://'  . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?authorized=';
-
-        // Request a token from Pocket
-        $result = $pocket->requestToken($redirect);
-
-        echo $result['request_token'];
-
-	}
-
-	public function pocket_generate_access_token() {
-
-		$request_token = $_POST['requestToken'];
-
-		$options = get_option( 'dvg_pocket_settings' );
-		$consumer_key = $options['pocket_consumer_key'];
-
-		$params = array(
-            'consumerKey' => $consumer_key,
-        );
-
-        $pocket = new Pocket( $params );
-
-		if ( $request_token ) {
-            // Convert the requestToken into an accessToken
-            // Note that a requestToken can only be converted once
-            // Thus refreshing this page will generate an auth error
-            // $user = $pocket->convertToken( $request_token );
-
-            // $user['access_token']   the user's access token for calls to Pocket
-            // $user['username']   the user's pocket username
-
-            // Set the user's access token to be used for all subsequent calls to the Pocket API
-            // $pocket->setAccessToken( $user['access_token'] );
-
-        }
-
-        // $user = $pocket->convertToken( $result['request_token'] );
-
-		// $access_token = $pocket->setAccessToken( $user['access_token'] );
-
-        // echo $result['request_token'];
-
-        var_dump($request_token);
-
-	}
-
-
-	// public function pocket_generate_access_token( $request_token ) {
-
-	// 	$user = $pocket->convertToken( $request_token );
-
-	// 	$access_token = $pocket->setAccessToken( $user['access_token'] );
-
-	// 	return $access_token;
-
-	// }
-
 
 }

@@ -147,124 +147,100 @@ class David_VG_Pocket {
         $post_settings_array = $this->get_post_settings_array();
 
         // Connect to Pocket OAuth
-        $connection = $this->connect_to_pocket( $post_settings_array );
+        $saves = $this->connect_to_pocket( $post_settings_array );
 
-        // // Retrieve the user's list of unread items (limit 5)
-        // // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-        // $args = array(
-        //     'state' => 'unread',
-        //     'sort' => 'newest',
-        //     'detailType' => 'simple',
-        //     'count' => 5
-        // );
-        // $items = $pocket->retrieve( $args, $post_settings_array['pocket_access_token'] );
+        echo '<pre>';
 
-        // echo '<pre>';
+        // Let's play with the saves!
+        if( $saves ){
 
-        // var_dump($post_settings_array);
+            foreach( $saves['list'] as $save ) {
 
-        // echo '</pre>';
+                // Grab the ID of each save
+                $save_id = $save['item_id'];
+                // $post_exist_args = array(
+                //     'post_type' => 'pocket_stream',
+                //     'meta_key' => '_pocket_id',
+                //     'meta_value' => $pocket_id,
+                //     );
 
+                var_dump($save);
 
-        // // Create $tweet_api_url from settings
-        // $tweet_api_url = $this->create_tweet_api_url( $post_settings_array );
+                // foreach( $save as $sa ) {
+                //     var_dump($sa);
+                // }
 
-        // // Now let's grab some tweets!
-        // $tweets = $connection->get($tweet_api_url);
-        // if( $post_settings_array['tweet_from'] == 'Search Query' ) {
-        //     $tweets = $tweets->statuses;
-        // }
+                // // Check to see if the tweet exists in the DB
+                // $post_exist = get_posts( $post_exist_args );
 
-        // // Let's play with the tweets!
-        // if( $tweets ){
+                // // Do Nothing with tweets that exist in the DB already
+                // if( $post_exist ) continue;
 
-        //     foreach( $tweets as $tweet ) {
+                // // Do nothing with retweets if posting them is disabled
+                // if( $post_settings_array['exclude_retweets'] == 1 && $tweet->retweeted_status ) continue;
 
-        //         // Grab the ID of each tweet
-        //         $pocket_id = $tweet->id_str;
-        //         $post_exist_args = array(
-        //             'post_type' => 'pocket_stream',
-        //             'meta_key' => '_pocket_id',
-        //             'meta_value' => $pocket_id,
-        //             );
+                // // Convert tweet links into usable links
+                // $tweet_text = $this->convert_tweet_links( $tweet );
 
-        //         // Check to see if the tweet exists in the DB
-        //         $post_exist = get_posts( $post_exist_args );
+                // // Convert @ to follow
+                // $tweet_text = $this->convert_replies_to_follows( $tweet_text );
 
-        //         // Do Nothing with tweets that exist in the DB already
-        //         if( $post_exist ) continue;
+                // // Link hashtags to search queries
+                // $tweet_text = $this->convert_hashtags_to_search( $tweet, $tweet_text );
 
-        //         // Convert tweet links into usable links
-        //         $tweet_text = $this->convert_tweet_links( $tweet );
+                // // Set tweet time as post publish date
+                // $publish_date_time = $this->set_publish_time( $tweet );
 
-        //         // Set tweet time as post publish date
-        //         $publish_date_time = $this->set_publish_time( $tweet );
+                // // Create post title as sanitized tweet text
+                // $twitter_post_title = strip_tags( html_entity_decode( $tweet_text ) );
 
-        //         // Create post title as sanitized tweet text
-        //         $twitter_post_title = strip_tags( html_entity_decode( $tweet_text ) );
+                // // Insert post parameters
+                // $insert_id = $this->create_post( $tweet_text, $twitter_post_title, $publish_date_time );
 
-        //         // Insert post parameters
-        //         $insert_id = $this->create_post( $tweet_text, $twitter_post_title, $publish_date_time );
+                // // Add featured image to post
+                // $this->create_featured_image( $tweet, $insert_id );
 
-        //         // Add featured image to post
-        //         $this->create_featured_image( $tweet, $insert_id );
+                // // Tweet's original URL
+                // $tweet_url  = $tweet_url = 'https://twitter.com/' . $tweet->user->screen_name . '/status/' . $pocket_id;
 
-        //         // Tweet's original URL
-        //         $tweet_url  = $tweet_url = 'https://twitter.com/' . $tweet->user->screen_name . '/status/' . $pocket_id;
+                // // Update tweet post meta for the ID and URL
+                // update_post_meta( $insert_id, '_pocket_id', $pocket_id );
+                // update_post_meta( $insert_id, '_tweet_url', $tweet_url );
 
-        //         // Update tweet post meta for the ID and URL
-        //         update_post_meta( $insert_id, '_pocket_id', $pocket_id );
-        //         update_post_meta( $insert_id, '_tweet_url', $tweet_url );
+            }
 
-        //     }
+        }
 
-        // }
+        echo '</pre>';
+
 
     }
 
 
-    public function connect_to_pocket(  ) {
+    /**
+     * Connect to Pocket grab data
+     *
+     * @return $saves
+     */
+    public function connect_to_pocket( $post_settings_array ) {
 
-        // Get settings from Pocket settings page
-        $post_settings_array = $this->get_post_settings_array();
-
-        $params = array(
-            'consumerKey' => $post_settings_array['consumer_key'],
-            // 'accessToken' => $post_settings_array['access_token'],
+        $args = array(
+            'consumerKey' => $post_settings_array['consumer_key']
         );
 
-        $pocket = new Pocket( $params );
+        $pocket = new Pocket( $args );
 
-        // if ( isset( $_GET['authorized'] ) ) {
-            // Convert the requestToken into an accessToken
-            // Note that a requestToken can only be covnerted once
-            // Thus refreshing this page will generate an auth error
-            $user = $pocket->convertToken( $post_settings_array['request_token'] );
-            /*
-             * $user['access_token']   the user's access token for calls to Pocket
-             * $user['username']   the user's pocket username
-             */
+        // Retrieve the user's list of both unread and archived items (min. limit 5)
+        // http://getpocket.com/developer/docs/v3/retrieve for a list of parameters
+        $params = array(
+            'state' => 'all',
+            'sort' => 'newest',
+            'detailType' => 'complete',
+            'count' => 5
+        );
+        $saves = $pocket->retrieve( $params, $post_settings_array['access_token'] );
 
-            // var_dump($post_settings_array['request_token']);
-
-            // Set the user's access token to be used for all subsequent calls to the Pocket API
-            // $pocket->setAccessToken( $user['access_token'] );
-
-
-            // // Retrieve the user's list of unread items (limit 5)
-            // // http://getpocket.com/developer/docs/v3/retrieve for a list of params
-            // $params = array(
-            //     'state' => 'unread',
-            //     'sort' => 'newest',
-            //     'detailType' => 'simple',
-            //     'count' => 5
-            // );
-            // $items = $pocket->retrieve( $params, $user['access_token'] );
-            // print_r($items);
-
-        // }
-
-        // return $items;
+        return $saves;
 
     }
 
@@ -362,7 +338,7 @@ class David_VG_Pocket {
         $post_settings_array = array();
 
         $post_settings_array['consumer_key'] = get_option('dvg_pocket_settings')['pocket_consumer_key'];
-        $post_settings_array['request_token'] = get_option('dvg_pocket_settings')['pocket_request_token'];
+        $post_settings_array['access_token'] = get_option('dvg_pocket_settings')['pocket_access_token'];
 
         return $post_settings_array;
 

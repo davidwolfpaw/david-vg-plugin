@@ -134,6 +134,7 @@ class David_VG {
 		 */
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-twitter.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-pocket.php';
+		require_once plugin_dir_path( __FILE__ ) . 'streams/vendor/autoload.php';
 
 		$this->loader = new David_VG_Loader();
 
@@ -190,12 +191,12 @@ class David_VG {
 		$this->loader->add_action( 'init', $twitter_includes, 'create_custom_post_type' );
 		$this->loader->add_action( 'cron_schedules', $twitter_includes, 'import_interval_minutes' );
 		$this->loader->add_action( 'init', $twitter_includes, 'set_twitter_schedule' );
-		$this->loader->add_action( 'wp', $twitter_includes, 'import_tweets_as_posts' );
+		$this->loader->add_action( 'init', $twitter_includes, 'import_tweets_as_posts' );
 
 		// Pocket Hooks
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		// $this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
-		// $this->loader->add_action( 'wp', $pocket_includes, 'connect_to_pocket' );
+		$this->loader->add_action( 'the_content', $pocket_includes, 'import_pocket_as_posts' );
 
 	}
 

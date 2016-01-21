@@ -241,12 +241,17 @@ class David_VG_Twitter {
         // Create $tweet_api_url from settings
         $tweet_api_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $post_settings_array['twitteruser'] . '&count=10';
 
-        if( $post_settings_array['exclude_retweets'] == 1 ) {
-            $tweet_api_url .= '&include_rts=false';
+
+        if( isset( $post_settings_array['exclude_retweets'] ) ) {
+            if( $post_settings_array['exclude_retweets'] == 1 ) {
+                $tweet_api_url .= '&include_rts=false';
+            }
         }
 
-        if( $post_settings_array['exclude_replies'] == 1 ) {
-            $tweet_api_url .= '&exclude_replies=true';
+        if( isset( $post_settings_array['exclude_replies'] ) ) {
+            if( $post_settings_array['exclude_replies'] == 1 ) {
+                $tweet_api_url .= '&exclude_replies=true';
+            }
         }
 
         // Get the most recent tweet to add the ID to the URL
@@ -426,18 +431,19 @@ class David_VG_Twitter {
 
     public function get_post_settings_array() {
 
-        $post_settings_array = array();
-
         $post_settings_array['twitteruser'] = get_option('dvg_twitter_settings')['twitter_user'];
         $post_settings_array['consumerkey'] = get_option('dvg_twitter_settings')['twitter_consumer_key'];
         $post_settings_array['consumersecret'] = get_option('dvg_twitter_settings')['twitter_consumer_secret'];
         $post_settings_array['accesstoken'] = get_option('dvg_twitter_settings')['twitter_access_token'];
         $post_settings_array['accesstokensecret'] = get_option('dvg_twitter_settings')['twitter_access_token_secret'];
 
-        $post_settings_array['exclude_retweets'] = get_option('dvg_twitter_settings')['exclude_retweets'];
-        $post_settings_array['exclude_replies'] = get_option('dvg_twitter_settings')['exclude_replies'];
+        if(isset(get_option('dvg_twitter_settings')['twitter_exclude_retweets']))
+            $post_settings_array['exclude_retweets'] = get_option('dvg_twitter_settings')['twitter_exclude_retweets'];
+        if(isset(get_option('dvg_twitter_settings')['twitter_exclude_replies']))
+            $post_settings_array['exclude_replies'] = get_option('dvg_twitter_settings')['twitter_exclude_replies'];
 
         return $post_settings_array;
+        // var_dump($post_settings_array);
 
     }
 

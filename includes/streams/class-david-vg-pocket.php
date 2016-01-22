@@ -149,8 +149,6 @@ class David_VG_Pocket {
         // Connect to Pocket OAuth
         $saves = $this->connect_to_pocket( $post_settings_array );
 
-        echo '<pre>';
-
         // Let's play with the saves!
         if( $saves ){
 
@@ -158,61 +156,47 @@ class David_VG_Pocket {
 
                 // Grab the ID of each save
                 $save_id = $save['item_id'];
-                // $post_exist_args = array(
-                //     'post_type' => 'pocket_stream',
-                //     'meta_key' => '_pocket_id',
-                //     'meta_value' => $pocket_id,
-                //     );
+                $post_exist_args = array(
+                    'post_type' => 'pocket_stream',
+                    'meta_key' => '_save_id',
+                    'meta_value' => $save_id,
+                    );
 
-                var_dump($save);
+                // Check to see if the save exists in the DB
+                $post_exist = get_posts( $post_exist_args );
 
-                // foreach( $save as $sa ) {
-                //     var_dump($sa);
-                // }
+                // Do Nothing with saves that exist in the DB already
+                if( $post_exist ) continue;
 
-                // // Check to see if the tweet exists in the DB
-                // $post_exist = get_posts( $post_exist_args );
+                // Set save time as post publish date
+                $publish_date_time = $this->set_publish_time( $save );
 
-                // // Do Nothing with tweets that exist in the DB already
-                // if( $post_exist ) continue;
+                // Create post title as sanitized text
+                $save_post_title = strip_tags( html_entity_decode( $save['resolved_title'] ) );
 
-                // // Do nothing with retweets if posting them is disabled
-                // if( $post_settings_array['exclude_retweets'] == 1 && $tweet->retweeted_status ) continue;
+                // Create post content as sanitized text
+                $save_post_content = strip_tags( html_entity_decode( $save['excerpt'] ) );
 
-                // // Convert tweet links into usable links
-                // $tweet_text = $this->convert_tweet_links( $tweet );
+                // Insert post parameters
+                $insert_id = $this->create_post( $save_post_content, $save_post_title, $publish_date_time );
 
-                // // Convert @ to follow
-                // $tweet_text = $this->convert_replies_to_follows( $tweet_text );
+                // Add featured image to post
+                $this->create_featured_image( $save, $insert_id );
 
-                // // Link hashtags to search queries
-                // $tweet_text = $this->convert_hashtags_to_search( $tweet, $tweet_text );
+                // Save's original URL
+                $save_url  = $save['resolved_url'];
 
-                // // Set tweet time as post publish date
-                // $publish_date_time = $this->set_publish_time( $tweet );
+                // Save's original URL
+                $save_byline  = $this->create_save_byline( $save );
 
-                // // Create post title as sanitized tweet text
-                // $twitter_post_title = strip_tags( html_entity_decode( $tweet_text ) );
-
-                // // Insert post parameters
-                // $insert_id = $this->create_post( $tweet_text, $twitter_post_title, $publish_date_time );
-
-                // // Add featured image to post
-                // $this->create_featured_image( $tweet, $insert_id );
-
-                // // Tweet's original URL
-                // $tweet_url  = $tweet_url = 'https://twitter.com/' . $tweet->user->screen_name . '/status/' . $pocket_id;
-
-                // // Update tweet post meta for the ID and URL
-                // update_post_meta( $insert_id, '_pocket_id', $pocket_id );
-                // update_post_meta( $insert_id, '_tweet_url', $tweet_url );
+                // Update save post meta
+                update_post_meta( $insert_id, '_save_id', $save_id );
+                update_post_meta( $insert_id, '_save_url', $save_url );
+                update_post_meta( $insert_id, '_save_byline', $save_byline );
 
             }
 
         }
-
-        echo '</pre>';
-
 
     }
 
@@ -236,7 +220,7 @@ class David_VG_Pocket {
             'state' => 'all',
             'sort' => 'newest',
             'detailType' => 'complete',
-            'count' => 5
+            'count' => 20
         );
         $saves = $pocket->retrieve( $params, $post_settings_array['access_token'] );
 
@@ -245,92 +229,134 @@ class David_VG_Pocket {
     }
 
 
+    /**
+     * Get main image and save to post as featured image
+     *
+     */
+    public function create_featured_image( $save, $insert_id ) {
 
-    // // public function create_featured_image( $tweet, $insert_id ) {
+        if( isset( $save['image'] ) ) {
 
-    // //     // Add Featured Image to Post
-    // //     $tweet_media = $tweet->entities->media;
-    // //     if($tweet_media && $insert_id){
+            $save_media = $save['image'];
 
-    // //         $tweet_media_url = $tweet_media[0]->media_url; // Define the image URL here
-    // //         $upload_dir = wp_upload_dir(); // Set upload folder
-    // //         $image_data = file_get_contents($tweet_media_url); // Get image data
-    // //         $filename   = basename($tweet_media_url); // Create image file name
+            if( $save_media && $insert_id ) {
 
-    // //         // Check folder permission and define file location
-    // //         if( wp_mkdir_p( $upload_dir['path'] ) ) {
-    // //             $file = $upload_dir['path'] . '/' . $filename;
-    // //         } else {
-    // //             $file = $upload_dir['basedir'] . '/' . $filename;
-    // //         }
+                // Get the URL of the image
+                $save_media_url = $save_media['src'];
+                $upload_dir = wp_upload_dir(); // Set upload folder
+                $image_data = file_get_contents( $save_media_url ); // Get image data
+                $filename   = basename( $save_media_url ); // Create image file name
 
-    // //         // Create the image  file on the server
-    // //         file_put_contents( $file, $image_data );
+                // Check folder permission and define file location
+                if( wp_mkdir_p( $upload_dir['path'] ) ) {
+                    $file = $upload_dir['path'] . '/' . $filename;
+                } else {
+                    $file = $upload_dir['basedir'] . '/' . $filename;
+                }
 
-    // //         // Check image file type
-    // //         $wp_filetype = wp_check_filetype( $filename, null );
+                // Create the image  file on the server
+                file_put_contents( $file, $image_data );
 
-    // //         // Set attachment data
-    // //         $attachment = array(
-    // //             'post_mime_type' => $wp_filetype['type'],
-    // //             'post_title'     => sanitize_file_name( $filename ),
-    // //             'post_content'   => '',
-    // //             'post_status'    => 'inherit'
-    // //             );
+                // Check image file type
+                $wp_filetype = wp_check_filetype( $filename, null );
 
-    // //         // Create the attachment
-    // //         $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
+                // Set attachment data
+                $attachment = array(
+                    'post_mime_type' => $wp_filetype['type'],
+                    'post_title'     => sanitize_file_name( $filename ),
+                    'post_content'   => '',
+                    'post_status'    => 'inherit'
+                    );
 
-    // //         // Define attachment metadata
-    // //         $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
 
-    // //         // Assign metadata to attachment
-    // //         wp_update_attachment_metadata( $attach_id, $attach_data );
+                // echo '<pre>';
+                // var_dump($image_data);
+                // echo '</pre>';
 
-    // //         // And finally assign featured image to post
-    // //         set_post_thumbnail( $insert_id, $attach_id );
+                // Create the attachment
+                $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
 
-    // //     }
+                // Define attachment metadata
+                $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
 
-    // // }
+                // Assign metadata to attachment
+                wp_update_attachment_metadata( $attach_id, $attach_data );
 
-    // // public function set_publish_time( $tweet ) {
+                // And finally assign featured image to post
+                set_post_thumbnail( $insert_id, $attach_id );
 
-    // //     // Set tweet time as post publish date
-    // //     $tweet_created_at = strtotime($tweet->created_at);
-    // //     $dvg_set_timezone = get_option('dvg_wp_time_as_published_date');
-    // //     $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
+            }
 
-    // //     if($dvg_set_timezone=='yes'){
-    // //         $wp_offset = get_option('gmt_offset');
-    // //         if($wp_offset){
-    // //             $tweet_post_time = $tweet_created_at + ($wp_offset * 3600);
-    // //         }
-    // //     }
-    // //     $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_post_time );
+        }
 
-    // //     return $publish_date_time;
+    }
 
-    // // }
 
-    // public function create_post( $tweet_text, $twitter_post_title, $publish_date_time ) {
+    public function set_publish_time( $save ) {
 
-    //     // Insert post parameters
-    //     $data = array(
-    //         'post_content'   => $tweet_text,
-    //         'post_title'     => $twitter_post_title,
-    //         'post_status'    => 'publish',
-    //         'post_type'      => 'pocket_stream',
-    //         'post_author'    => 1,
-    //         'post_date'      => $publish_date_time,
-    //         'comment_status' => 'closed'
-    //         );
+        // Get time added to account in UTC
+        $save_created_at = $save['time_added'];
+        // Set GMT offset (number of hours times minutes times seconds)
+        $gmt_offset = get_option('gmt_offset') * 60 * 60;
+        $save_post_time = $save_created_at + $gmt_offset;
+        // Convert publish date and time
+        $publish_date_time = date_i18n( 'Y-m-d H:i:s', $save_post_time );
 
-    //     $insert_id = wp_insert_post( $data );
+        return $publish_date_time;
 
-    //     return $insert_id;
+    }
 
-    // }
+
+    /**
+     * Get save authors and convert to string
+     *
+     */
+    public function create_save_byline( $save ) {
+
+        if( isset( $save['authors'] ) ) {
+
+            $save_authors = $save['authors'];
+
+            if( $save_authors ) {
+
+                $save_byline = array();
+
+                foreach( $save_authors as $save_author ) {
+
+                    $author = $save_author['name'];
+
+                    $save_byline[] = $author;
+
+                }
+
+                json_encode( $save_byline );
+
+                return $save_byline;
+
+            }
+
+        }
+
+    }
+
+    public function create_post( $save_post_content, $save_post_title, $publish_date_time ) {
+
+        // Insert post parameters
+        $data = array(
+            'post_content'   => $save_post_content,
+            'post_title'     => $save_post_title,
+            'post_status'    => 'publish',
+            'post_type'      => 'pocket_stream',
+            'post_author'    => 1,
+            'post_date'      => $publish_date_time,
+            'comment_status' => 'closed'
+            );
+
+        $insert_id = wp_insert_post( $data );
+
+        return $insert_id;
+
+    }
 
 
     public function get_post_settings_array() {

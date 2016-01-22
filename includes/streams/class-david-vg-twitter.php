@@ -165,7 +165,7 @@ class David_VG_Twitter {
         $tweets = $connection->get($tweet_api_url);
 
         // Let's play with the tweets!
-        if( $tweets ){
+        if( $tweets ) {
 
             foreach( $tweets as $tweet ) {
 
@@ -184,7 +184,8 @@ class David_VG_Twitter {
                 if( $post_exist ) continue;
 
                 // Do nothing with retweets if posting them is disabled
-                if( $post_settings_array['exclude_retweets'] == 1 && $tweet->retweeted_status ) continue;
+                if( isset( $post_settings_array['exclude_retweets'] ) )
+                    if( $post_settings_array['exclude_retweets'] == 1 && $tweet->retweeted_status ) continue;
 
                 // Convert tweet links into usable links
                 $tweet_text = $this->convert_tweet_links( $tweet );
@@ -239,7 +240,7 @@ class David_VG_Twitter {
     public function create_tweet_api_url( $post_settings_array ){
 
         // Create $tweet_api_url from settings
-        $tweet_api_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $post_settings_array['twitteruser'] . '&count=10';
+        $tweet_api_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=' . $post_settings_array['twitteruser'] . '&count=100';
 
 
         if( isset( $post_settings_array['exclude_retweets'] ) ) {
@@ -394,15 +395,7 @@ class David_VG_Twitter {
 
         // Set tweet time as post publish date
         $tweet_created_at = strtotime( $tweet->created_at );
-        $dvg_set_timezone = get_option( 'dvg_wp_time_as_published_date' );
         $tweet_post_time = $tweet_created_at + $tweet->user->utc_offset;
-
-        if($dvg_set_timezone=='yes'){
-            $wp_offset = get_option('gmt_offset');
-            if($wp_offset){
-                $tweet_post_time = $tweet_created_at + ($wp_offset * 3600);
-            }
-        }
         $publish_date_time = date_i18n( 'Y-m-d H:i:s', $tweet_post_time );
 
         return $publish_date_time;

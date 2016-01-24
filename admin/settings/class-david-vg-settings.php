@@ -3,11 +3,18 @@
 /**
  * The settings of the plugin.
  *
- * @link       http://devinvinson.com
+ * @link       http://david.vg
  * @since      1.0.0
  *
- * @package    Wppb_Demo_Plugin
- * @subpackage Wppb_Demo_Plugin/admin
+ * @package    David_VG
+ * @subpackage David_VG/includes
+ */
+
+/**
+ *
+ * @package    David_VG
+ * @subpackage David_VG/includes
+ * @author     David Laietta <david@david.vg>
  */
 
 // $admin_path = realpath(__DIR__ . '/../..');
@@ -130,8 +137,8 @@ class David_VG_Admin_Settings {
 				$active_tab = 'twitter_settings';
 			} else if( $active_tab == 'pocket_settings' ) {
 				$active_tab = 'pocket_settings';
-			} else if( $active_tab == 'input_examples' ) {
-				$active_tab = 'input_examples';
+			} else if( $active_tab == 'google_fit_settings' ) {
+				$active_tab = 'google_fit_settings';
 			} else {
 				$active_tab = 'twitter_settings';
 			}
@@ -140,7 +147,7 @@ class David_VG_Admin_Settings {
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=david-vg&tab=twitter_settings" class="nav-tab <?php echo $active_tab == 'twitter_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Twitter', 'david-vg' ); ?></a>
 				<a href="?page=david-vg&tab=pocket_settings" class="nav-tab <?php echo $active_tab == 'pocket_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Pocket', 'david-vg' ); ?></a>
-				<a href="?page=david-vg&tab=input_examples" class="nav-tab <?php echo $active_tab == 'input_examples' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Input Examples', 'david-vg' ); ?></a>
+				<a href="?page=david-vg&tab=google_fit_settings" class="nav-tab <?php echo $active_tab == 'google_fit_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Google Fit', 'david-vg' ); ?></a>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -158,8 +165,8 @@ class David_VG_Admin_Settings {
 
 				} else {
 
-					settings_fields( 'dvg_input_examples' );
-					do_settings_sections( 'dvg_input_examples' );
+					settings_fields( 'dvg_google_fit_settings' );
+					do_settings_sections( 'dvg_google_fit_settings' );
 
 				}
 
@@ -178,16 +185,24 @@ class David_VG_Admin_Settings {
 	 */
 	public function twitter_settings_callback() {
 
-		$options = get_option('dvg_twitter_settings');
+		// $options = get_option('dvg_twitter_settings');
 		echo '<p>' . __( 'Modify Twitter Settings', 'david-vg' ) . '</p>';
 
 	}
 
 	public function pocket_settings_callback() {
 
-		$options = get_option('dvg_pocket_settings');
-		var_dump($options);
+		// $options = get_option('dvg_pocket_settings');
+		// var_dump($options);
 		echo '<p>' . __( 'Modify Pocket Settings', 'david-vg' ) . '</p>';
+
+	}
+
+	public function google_fit_settings_callback() {
+
+		$options = get_option('dvg_google_fit_settings');
+		var_dump($options);
+		echo '<p>' . __( 'Modify Google Fit Settings', 'david-vg' ) . '</p>';
 
 	}
 
@@ -341,6 +356,44 @@ class David_VG_Admin_Settings {
 		register_setting(
 			'dvg_pocket_settings',
 			'dvg_pocket_settings',
+			array( $this, 'validate_inputs' )
+		);
+
+	}
+
+
+	/**
+	 * Initializes the Google Fit settings by registering the Sections, Fields, and Settings.
+	 *
+	 * This function is registered with the 'admin_init' hook.
+	 */
+	public function initialize_google_fit_settings() {
+
+		if( false == get_option( 'dvg_google_fit_settings' ) ) {
+			$default_array = $this->default_pocket_settings();
+			update_option( 'dvg_google_fit_settings', $default_array );
+		}
+
+		add_settings_section(
+			'google_fit_settings_section',
+			__( 'Pocket Settings', 'david-vg' ),
+			array( $this, 'google_fit_settings_callback'),
+			'dvg_google_fit_settings'
+		);
+
+		add_settings_field(
+			'pocket_consumer_key',
+			__( 'Pocket Consumer Key', 'david-vg' ),
+			array( $this, 'text_input_callback'),
+			'dvg_google_fit_settings',
+			'google_fit_settings_section',
+			array( 'label_for' => 'pocket_consumer_key', 'option_group' => 'dvg_google_fit_settings', 'option_id' => 'pocket_consumer_key' )
+		);
+
+
+		register_setting(
+			'dvg_google_fit_settings',
+			'dvg_google_fit_settings',
 			array( $this, 'validate_inputs' )
 		);
 

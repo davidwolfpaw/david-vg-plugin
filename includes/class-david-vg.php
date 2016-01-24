@@ -134,7 +134,8 @@ class David_VG {
 		 */
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-twitter.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-pocket.php';
-		require_once plugin_dir_path( __FILE__ ) . 'streams/vendor/autoload.php';
+		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-google-fit.php';
+		require_once plugin_dir_path( __FILE__ ) . 'streams/google/autoload.php';
 
 		$this->loader = new David_VG_Loader();
 
@@ -171,6 +172,7 @@ class David_VG {
 		$plugin_settings = new David_VG_Admin_Settings( $this->get_plugin_name(), $this->get_version() );
 		$twitter_includes = new David_VG_Twitter( $this->get_plugin_name(), $this->get_version() );
 		$pocket_includes = new David_VG_Pocket( $this->get_plugin_name(), $this->get_version() );
+		$google_fit_includes = new David_VG_Google_Fit( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -197,6 +199,10 @@ class David_VG {
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		// $this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
 		$this->loader->add_action( 'wp', $pocket_includes, 'import_pocket_as_posts' );
+
+		// Pocket Hooks
+		$this->loader->add_action( 'init', $google_fit_includes, 'create_custom_post_type' );
+		// $this->loader->add_action( 'wp', $google_fit_includes, 'import_pocket_as_posts' );
 
 	}
 

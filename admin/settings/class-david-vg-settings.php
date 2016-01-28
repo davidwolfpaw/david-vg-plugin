@@ -118,6 +118,17 @@ class David_VG_Admin_Settings {
 
 	}
 
+	public function default_google_fit_settings() {
+
+		$defaults = array(
+			'google_fit_client_ID'		=> '',
+			'google_fit_client_secret'	=> '',
+		);
+
+		return  $defaults;
+
+	}
+
 
 	/**
 	 * Renders a simple page to display for the theme menu defined above.
@@ -370,24 +381,33 @@ class David_VG_Admin_Settings {
 	public function initialize_google_fit_settings() {
 
 		if( false == get_option( 'dvg_google_fit_settings' ) ) {
-			$default_array = $this->default_pocket_settings();
+			$default_array = $this->default_google_fit_settings();
 			update_option( 'dvg_google_fit_settings', $default_array );
 		}
 
 		add_settings_section(
 			'google_fit_settings_section',
-			__( 'Pocket Settings', 'david-vg' ),
+			__( 'Google Fit Settings', 'david-vg' ),
 			array( $this, 'google_fit_settings_callback'),
 			'dvg_google_fit_settings'
 		);
 
 		add_settings_field(
-			'pocket_consumer_key',
-			__( 'Pocket Consumer Key', 'david-vg' ),
+			'google_fit_client_ID',
+			__( 'Google Fit Client ID', 'david-vg' ),
 			array( $this, 'text_input_callback'),
 			'dvg_google_fit_settings',
 			'google_fit_settings_section',
-			array( 'label_for' => 'pocket_consumer_key', 'option_group' => 'dvg_google_fit_settings', 'option_id' => 'pocket_consumer_key' )
+			array( 'label_for' => 'google_fit_client_ID', 'option_group' => 'dvg_google_fit_settings', 'option_id' => 'google_fit_client_ID' )
+		);
+
+		add_settings_field(
+			'google_fit_client_secret',
+			__( 'Google Fit Client Secret', 'david-vg' ),
+			array( $this, 'text_input_callback'),
+			'dvg_google_fit_settings',
+			'google_fit_settings_section',
+			array( 'label_for' => 'google_fit_client_secret', 'option_group' => 'dvg_google_fit_settings', 'option_id' => 'google_fit_client_secret' )
 		);
 
 

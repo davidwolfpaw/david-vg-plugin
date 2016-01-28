@@ -136,6 +136,7 @@ class David_VG {
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-pocket.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-google-fit.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/google/autoload.php';
+		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-open-weather.php';
 
 		$this->loader = new David_VG_Loader();
 

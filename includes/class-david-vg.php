@@ -173,6 +173,7 @@ class David_VG {
 		$twitter_includes = new David_VG_Twitter( $this->get_plugin_name(), $this->get_version() );
 		$pocket_includes = new David_VG_Pocket( $this->get_plugin_name(), $this->get_version() );
 		$google_fit_includes = new David_VG_Google_Fit( $this->get_plugin_name(), $this->get_version() );
+		$open_weather_includes = new David_VG_Open_Weather( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -189,6 +190,7 @@ class David_VG {
         $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_twitter_settings' );
         $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_pocket_settings' );
         $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_google_fit_settings' );
+        $this->loader->add_action( 'admin_init', $plugin_settings, 'initialize_open_weather_settings' );
 
 		// Twitter Hooks
 		$this->loader->add_action( 'init', $twitter_includes, 'create_custom_post_type' );

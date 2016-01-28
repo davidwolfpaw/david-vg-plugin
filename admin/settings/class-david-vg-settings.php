@@ -129,6 +129,17 @@ class David_VG_Admin_Settings {
 
 	}
 
+	public function default_open_weather_settings() {
+
+		$defaults = array(
+			'open_weather_appid'		=> '',
+			'open_weather_zipcode'		=> '',
+		);
+
+		return  $defaults;
+
+	}
+
 
 	/**
 	 * Renders a simple page to display for the theme menu defined above.
@@ -150,6 +161,8 @@ class David_VG_Admin_Settings {
 				$active_tab = 'pocket_settings';
 			} else if( $active_tab == 'google_fit_settings' ) {
 				$active_tab = 'google_fit_settings';
+			} else if( $active_tab == 'weather_settings' ) {
+				$active_tab = 'weather_settings';
 			} else {
 				$active_tab = 'twitter_settings';
 			}
@@ -159,6 +172,7 @@ class David_VG_Admin_Settings {
 				<a href="?page=david-vg&tab=twitter_settings" class="nav-tab <?php echo $active_tab == 'twitter_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Twitter', 'david-vg' ); ?></a>
 				<a href="?page=david-vg&tab=pocket_settings" class="nav-tab <?php echo $active_tab == 'pocket_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Pocket', 'david-vg' ); ?></a>
 				<a href="?page=david-vg&tab=google_fit_settings" class="nav-tab <?php echo $active_tab == 'google_fit_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Google Fit', 'david-vg' ); ?></a>
+				<a href="?page=david-vg&tab=weather_settings" class="nav-tab <?php echo $active_tab == 'weather_settings' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Weather', 'david-vg' ); ?></a>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -174,10 +188,20 @@ class David_VG_Admin_Settings {
 					settings_fields( 'dvg_pocket_settings' );
 					do_settings_sections( 'dvg_pocket_settings' );
 
-				} else {
+				} elseif( $active_tab == 'google_fit_settings' ) {
 
 					settings_fields( 'dvg_google_fit_settings' );
 					do_settings_sections( 'dvg_google_fit_settings' );
+
+				} elseif( $active_tab == 'weather_settings' ) {
+
+					settings_fields( 'dvg_open_weather_settings' );
+					do_settings_sections( 'dvg_open_weather_settings' );
+
+				} else {
+
+					settings_fields( 'dvg_twitter_settings' );
+					do_settings_sections( 'dvg_twitter_settings' );
 
 				}
 
@@ -214,6 +238,14 @@ class David_VG_Admin_Settings {
 		$options = get_option('dvg_google_fit_settings');
 		var_dump($options);
 		echo '<p>' . __( 'Modify Google Fit Settings', 'david-vg' ) . '</p>';
+
+	}
+
+	public function open_weather_settings_callback() {
+
+		$options = get_option('dvg_open_weather_settings');
+		var_dump($options);
+		echo '<p>' . __( 'Modify Weather Settings', 'david-vg' ) . '</p>';
 
 	}
 
@@ -414,6 +446,52 @@ class David_VG_Admin_Settings {
 		register_setting(
 			'dvg_google_fit_settings',
 			'dvg_google_fit_settings',
+			array( $this, 'validate_inputs' )
+		);
+
+	}
+
+
+	/**
+	 * Initializes the Open Weather Map settings by registering the Sections, Fields, and Settings.
+	 *
+	 * This function is registered with the 'admin_init' hook.
+	 */
+	public function initialize_open_weather_settings() {
+
+		if( false == get_option( 'dvg_open_weather_settings' ) ) {
+			$default_array = $this->default_open_weather_settings();
+			update_option( 'dvg_open_weather_settings', $default_array );
+		}
+
+		add_settings_section(
+			'open_weather_settings_section',
+			__( 'Daily Weather Settings', 'david-vg' ),
+			array( $this, 'open_weather_settings_callback'),
+			'dvg_open_weather_settings'
+		);
+
+		add_settings_field(
+			'open_weather_appid',
+			__( 'Open Weather APPID', 'david-vg' ),
+			array( $this, 'text_input_callback'),
+			'dvg_open_weather_settings',
+			'open_weather_settings_section',
+			array( 'label_for' => 'open_weather_appid', 'option_group' => 'dvg_open_weather_settings', 'option_id' => 'open_weather_appid' )
+		);
+
+		add_settings_field(
+			'open_weather_zipcode',
+			__( 'Zip Code', 'david-vg' ),
+			array( $this, 'text_input_callback'),
+			'dvg_open_weather_settings',
+			'open_weather_settings_section',
+			array( 'label_for' => 'open_weather_zipcode', 'option_group' => 'dvg_open_weather_settings', 'option_id' => 'open_weather_zipcode' )
+		);
+
+		register_setting(
+			'dvg_open_weather_settings',
+			'dvg_open_weather_settings',
 			array( $this, 'validate_inputs' )
 		);
 

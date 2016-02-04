@@ -137,6 +137,7 @@ class David_VG {
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-google-fit.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/google/autoload.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-open-weather.php';
+		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-daily.php';
 
 		$this->loader = new David_VG_Loader();
 
@@ -175,6 +176,7 @@ class David_VG {
 		$pocket_includes = new David_VG_Pocket( $this->get_plugin_name(), $this->get_version() );
 		$google_fit_includes = new David_VG_Google_Fit( $this->get_plugin_name(), $this->get_version() );
 		$open_weather_includes = new David_VG_Open_Weather( $this->get_plugin_name(), $this->get_version() );
+		$daily_includes = new David_VG_Daily( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -204,9 +206,13 @@ class David_VG {
 		// $this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
 		$this->loader->add_action( 'admin_head', $pocket_includes, 'import_pocket_as_posts' );
 
-		// Pocket Hooks
+		// Google Fit Hooks
 		$this->loader->add_action( 'init', $google_fit_includes, 'create_custom_post_type' );
-		// $this->loader->add_action( 'wp', $google_fit_includes, 'import_pocket_as_posts' );
+		$this->loader->add_action( 'the_content', $google_fit_includes, 'import_google_fit_as_posts' );
+
+		// Daily Hooks
+		$this->loader->add_action( 'init', $daily_includes, 'create_custom_post_type' );
+		// $this->loader->add_action( 'the_content', $daily_includes, 'import_google_fit_as_posts' );
 
 	}
 

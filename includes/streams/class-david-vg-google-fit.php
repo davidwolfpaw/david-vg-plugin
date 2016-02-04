@@ -10,6 +10,8 @@
  * @subpackage David_VG/includes
  */
 
+// require_once plugin_dir_path( __FILE__ ) . 'google/autoload.php';
+
 /**
  *
  * @package    David_VG
@@ -102,8 +104,8 @@ class David_VG_Google_Fit {
             'label'                 => __( 'Google Fit', 'david-vg' ),
             'description'           => __( 'Stream of Google Fit Data', 'david-vg' ),
             'labels'                => $labels,
-            'supports'              => array( 'title', 'editor', 'author', 'thumbnail', ),
-            'taxonomies'            => array( 'category', 'post_tag' ),
+            'supports'              => array( 'title', 'thumbnail', ),
+            'taxonomies'            => array(),
             'hierarchical'          => false,
             'public'                => true,
             'show_ui'               => true,
@@ -124,7 +126,7 @@ class David_VG_Google_Fit {
 
 
     //Check and Schedule Cron job
-    public function set_pocket_schedule() {
+    public function set_google_fit_schedule() {
 
         if (!wp_next_scheduled('import_google_fit_as_posts')) {
             wp_schedule_event(time(), 'five_minutes', 'import_google_fit_as_posts');
@@ -144,7 +146,10 @@ class David_VG_Google_Fit {
         $post_settings_array = $this->get_post_settings_array();
 
         // Connect to Google Fit OAuth
-        $fit_data = $this->connect_to_google_fit( $post_settings_array );
+        // $fit_data = $this->connect_to_google_fit( $post_settings_array );
+
+        // $client->setApplicationName("dvg");
+        // $apiKey = "AIzaSyBEMuFUxPIaI5cn8WJSOhPIAbSSBPPNJvQ";
 
         // // Let's play with the fit_data!
         // if( $fit_data ){
@@ -177,19 +182,12 @@ class David_VG_Google_Fit {
         //         // Insert post parameters
         //         $insert_id = $this->create_post( $save_post_content, $save_post_title, $publish_date_time );
 
-        //         // Add featured image to post
-        //         $this->create_featured_image( $save, $insert_id );
-
         //         // Save's original URL
         //         $save_url  = $save['resolved_url'];
-
-        //         // Save's original URL
-        //         $save_byline  = $this->create_save_byline( $save );
 
         //         // Update save post meta
         //         update_post_meta( $insert_id, '_save_id', $save_id );
         //         update_post_meta( $insert_id, '_save_url', $save_url );
-        //         update_post_meta( $insert_id, '_save_byline', $save_byline );
 
         //     }
 
@@ -211,64 +209,6 @@ class David_VG_Google_Fit {
     }
 
 
-    // /**
-    //  * Get main image and save to post as featured image
-    //  *
-    //  */
-    // public function create_featured_image( $save, $insert_id ) {
-
-    //     if( isset( $save['image'] ) ) {
-
-    //         $save_media = $save['image'];
-
-    //         if( $save_media && $insert_id ) {
-
-    //             // Get the URL of the image
-    //             $save_media_url = $save_media['src'];
-    //             $upload_dir = wp_upload_dir(); // Set upload folder
-    //             $image_data = file_get_contents( $save_media_url ); // Get image data
-    //             $filename   = basename( $save_media_url ); // Create image file name
-
-    //             // Check folder permission and define file location
-    //             if( wp_mkdir_p( $upload_dir['path'] ) ) {
-    //                 $file = $upload_dir['path'] . '/' . $filename;
-    //             } else {
-    //                 $file = $upload_dir['basedir'] . '/' . $filename;
-    //             }
-
-    //             // Create the image  file on the server
-    //             file_put_contents( $file, $image_data );
-
-    //             // Check image file type
-    //             $wp_filetype = wp_check_filetype( $filename, null );
-
-    //             // Set attachment data
-    //             $attachment = array(
-    //                 'post_mime_type' => $wp_filetype['type'],
-    //                 'post_title'     => sanitize_file_name( $filename ),
-    //                 'post_content'   => '',
-    //                 'post_status'    => 'inherit'
-    //                 );
-
-    //             // Create the attachment
-    //             $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
-
-    //             // Define attachment metadata
-    //             $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
-
-    //             // Assign metadata to attachment
-    //             wp_update_attachment_metadata( $attach_id, $attach_data );
-
-    //             // And finally assign featured image to post
-    //             set_post_thumbnail( $insert_id, $attach_id );
-
-    //         }
-
-    //     }
-
-    // }
-
-
     // public function set_publish_time( $save ) {
 
     //     // Get time added to account in UTC
@@ -283,38 +223,6 @@ class David_VG_Google_Fit {
 
     // }
 
-
-    // /**
-    //  * Get save authors and convert to string
-    //  *
-    //  */
-    // public function create_save_byline( $save ) {
-
-    //     if( isset( $save['authors'] ) ) {
-
-    //         $save_authors = $save['authors'];
-
-    //         if( $save_authors ) {
-
-    //             $save_byline = array();
-
-    //             foreach( $save_authors as $save_author ) {
-
-    //                 $author = $save_author['name'];
-
-    //                 $save_byline[] = $author;
-
-    //             }
-
-    //             json_encode( $save_byline );
-
-    //             return $save_byline;
-
-    //         }
-
-    //     }
-
-    // }
 
     // public function create_post( $save_post_content, $save_post_title, $publish_date_time ) {
 
@@ -340,8 +248,8 @@ class David_VG_Google_Fit {
 
         $post_settings_array = array();
 
-        $post_settings_array['consumer_key'] = get_option('dvg_google_fit_settings')['pocket_consumer_key'];
-        $post_settings_array['access_token'] = get_option('dvg_google_fit_settings')['pocket_access_token'];
+        $post_settings_array['google_fit_client_ID'] = get_option('dvg_google_fit_settings')['google_fit_client_ID'];
+        $post_settings_array['google_fit_client_secret'] = get_option('dvg_google_fit_settings')['google_fit_client_secret'];
 
         return $post_settings_array;
 

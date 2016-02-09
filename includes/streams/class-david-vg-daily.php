@@ -166,23 +166,16 @@ class David_VG_Daily {
         $post_exist = in_array( $current_date, $dates );
 
         // Don't create a daily post if one already exists for today
-        if( $post_exist ) continue;
+        if( $post_exist ) return;
 
         // Set save time as post publish date
         $publish_date_time = $this->set_publish_time();
-
-        var_dump($publish_date_time);
 
         // Create post title as sanitized date
         $daily_post_title = strip_tags( html_entity_decode( $current_date ) );
 
         // Insert post parameters
         $insert_id = $this->create_post( $daily_post_title, $publish_date_time );
-
-
-        // // Update save post meta
-        // update_post_meta( $insert_id, '_save_id', $daily_id );
-        // update_post_meta( $insert_id, '_save_url', $daily_url );
 
     }
 

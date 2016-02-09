@@ -201,7 +201,7 @@ class David_VG {
 		// $this->loader->add_action( 'init', $twitter_includes, 'set_twitter_schedule' );
 		$this->loader->add_action( 'admin_head', $twitter_includes, 'import_tweets_as_posts' );
 
-		// Pocket Hooks
+		// Pocket Hooks 
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		// $this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
 		$this->loader->add_action( 'admin_head', $pocket_includes, 'import_pocket_as_posts' );
@@ -212,7 +212,7 @@ class David_VG {
 
 		// Daily Hooks
 		$this->loader->add_action( 'init', $daily_includes, 'create_custom_post_type' );
-		$this->loader->add_action( 'wp', $daily_includes, 'import_daily_as_posts' );
+		$this->loader->add_action( 'wp', $daily_includes, 'import_daily_as_posts', 5 );
 
 	}
 

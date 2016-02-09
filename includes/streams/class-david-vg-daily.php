@@ -143,14 +143,13 @@ class David_VG_Daily {
         // Get settings from Dailies settings page
         $post_settings_array = $this->get_post_settings_array();
 
-        // Grab the ID of each save
-        $daily_id = $daily['item_id'];
+
+        // Check to see if the save exists in the DB
         $daily_post_args = array(
             'post_type' => 'daily_stream',
             'numberposts' => 5,
             );
 
-        // Check to see if the save exists in the DB
         $daily_posts = get_posts( $daily_post_args );
 
         // Set the current date

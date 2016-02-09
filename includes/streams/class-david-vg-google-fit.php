@@ -149,7 +149,7 @@ class David_VG_Google_Fit {
         // $fit_data = $this->connect_to_google_fit( $post_settings_array );
 
         // $client->setApplicationName("dvg");
-        // $apiKey = "AIzaSyBEMuFUxPIaI5cn8WJSOhPIAbSSBPPNJvQ";
+        // $apiKey = "";
 
         // // Let's play with the fit_data!
         // if( $fit_data ){

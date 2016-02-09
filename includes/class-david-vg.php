@@ -135,7 +135,7 @@ class David_VG {
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-twitter.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-pocket.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-google-fit.php';
-		require_once plugin_dir_path( __FILE__ ) . 'streams/google/autoload.php';
+		// require_once plugin_dir_path( __FILE__ ) . 'streams/google/autoload.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-open-weather.php';
 		require_once plugin_dir_path( __FILE__ ) . 'streams/class-david-vg-daily.php';
 
@@ -212,7 +212,7 @@ class David_VG {
 
 		// Daily Hooks
 		$this->loader->add_action( 'init', $daily_includes, 'create_custom_post_type' );
-		// $this->loader->add_action( 'the_content', $daily_includes, 'import_google_fit_as_posts' );
+		$this->loader->add_action( 'wp', $daily_includes, 'import_daily_as_posts' );
 
 	}
 

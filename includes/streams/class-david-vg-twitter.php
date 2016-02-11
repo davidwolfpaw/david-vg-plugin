@@ -127,22 +127,22 @@ class David_VG_Twitter {
 
         /*= Add once 5 minute interval to wp schedules
     -------------------------------------------------- */
-    public function import_interval_minutes($interval) {
+    // public function import_interval_minutes($interval) {
 
-        $interval_time = 300;
-        $interval['five_minutes'] = array('interval' => $interval_time, 'display' => __('Every 5 minutes') );
-        return $interval;
+    //     $interval_time = 300;
+    //     $interval['five_minutes'] = array('interval' => $interval_time, 'display' => __('Every 5 minutes') );
+    //     return $interval;
 
-    }
+    // }
 
-    //Check and Schedule Cron job
-    public function set_twitter_schedule() {
+    // //Check and Schedule Cron job
+    // public function set_twitter_schedule() {
 
-        if (!wp_next_scheduled('import_tweets_as_posts')) {
-            wp_schedule_event(time(), 'five_minutes', 'import_tweets_as_posts');
-        }
+    //     if (!wp_next_scheduled('import_tweets_as_posts')) {
+    //         wp_schedule_event(time(), 'five_minutes', 'import_tweets_as_posts');
+    //     }
 
-    }
+    // }
 
 
     /**
@@ -184,7 +184,7 @@ class David_VG_Twitter {
                 if( $post_exist ) continue;
 
                 // Do nothing with retweets if posting them is disabled
-                if( isset( $post_settings_array['exclude_retweets'] ) )
+                if( isset( $post_settings_array['exclude_retweets'] ) && isset( $tweet->retweeted_status ) )
                     if( $post_settings_array['exclude_retweets'] == 1 && $tweet->retweeted_status ) continue;
 
                 // Convert tweet links into usable links
@@ -281,7 +281,6 @@ class David_VG_Twitter {
 
     }
 
-    // TODO: Display username feature
     public function convert_tweet_links( $tweet ) {
 
         // Convert tweet links into usable links
@@ -289,17 +288,14 @@ class David_VG_Twitter {
         $replace = '<a href="${0}" target="_blank">${0}</a>';
         $tweet_text = $tweet->text;
 
-        if($tweet->retweeted_status) {
+        if( isset( $tweet->retweeted_status ) ) {
+            if( $tweet->retweeted_status ) {
 
-            $display_username = get_option('dvg_display_retweets_username');
-            $tweet_text = "RT ";
+                $tweet_text = "RT ";
 
-            if($display_username=='yes'){
-                $tweet_text .= $tweet->retweeted_status->user->name .' ';
+                $tweet_text .= "@".$tweet->retweeted_status->user->screen_name .": ". $tweet->retweeted_status->text;
+
             }
-
-            $tweet_text .= "@".$tweet->retweeted_status->user->screen_name .": ". $tweet->retweeted_status->text;
-
         }
 
         $tweet_text = preg_replace( $pattern, $replace, $tweet_text );
@@ -321,7 +317,7 @@ class David_VG_Twitter {
 
     public function convert_hashtags_to_search( $tweet, $tweet_text ) {
 
-        // Link Search Querys under tweet text
+        // Link Search Queries under tweet text
         $hashtags = $tweet->entities->hashtags;
 
         if( $hashtags ){
@@ -390,7 +386,6 @@ class David_VG_Twitter {
 
     }
 
-    // TODO - Update
     public function set_publish_time( $tweet ) {
 
         // Set tweet time as post publish date

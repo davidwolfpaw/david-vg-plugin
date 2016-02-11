@@ -208,7 +208,7 @@ class David_VG {
 
 		// Google Fit Hooks
 		$this->loader->add_action( 'init', $google_fit_includes, 'create_custom_post_type' );
-		$this->loader->add_action( 'the_content', $google_fit_includes, 'import_google_fit_as_posts' );
+		// $this->loader->add_action( 'the_content', $google_fit_includes, 'import_google_fit_as_posts' );
 
 		// Daily Hooks
 		$this->loader->add_action( 'init', $daily_includes, 'create_custom_post_type' );

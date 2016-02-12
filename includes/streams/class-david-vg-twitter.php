@@ -281,6 +281,7 @@ class David_VG_Twitter {
 
     }
 
+    // TODO: Convert Twitter Shortlinks to original links
     public function convert_tweet_links( $tweet ) {
 
         // Convert tweet links into usable links
@@ -340,9 +341,10 @@ class David_VG_Twitter {
     public function create_featured_image( $tweet, $insert_id ) {
 
         // Add Featured Image to Post
-        $tweet_media = $tweet->entities->media;
+        if( isset( $tweet->entities->media ) )
+            $tweet_media = $tweet->entities->media;
 
-        if( $tweet_media && $insert_id ) {
+        if( isset( $tweet_media ) && $insert_id ) {
 
             $tweet_media_url = $tweet_media[0]->media_url; // Define the image URL here
             $upload_dir = wp_upload_dir(); // Set upload folder

@@ -178,14 +178,17 @@ class David_VG {
 		$open_weather_includes = new David_VG_Open_Weather( $this->get_plugin_name(), $this->get_version() );
 		$daily_includes = new David_VG_Daily( $this->get_plugin_name(), $this->get_version() );
 
+		// Plugin Admin
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'cron_schedules', $plugin_admin, 'import_interval_five_minutes' );
 
 		// // Ajax
 		// $this->loader->add_action( 'wp_ajax_pocket_generate_request_token', $plugin_settings, 'pocket_generate_request_token' );
 		// $this->loader->add_action( 'wp_ajax_nopriv_pocket_generate_request_token', $plugin_settings, 'pocket_generate_request_token' );
 		// $this->loader->add_action( 'wp_ajax_pocket_generate_access_token', $plugin_settings, 'pocket_generate_access_token' );
 		// $this->loader->add_action( 'wp_ajax_nopriv_pocket_generate_access_token', $plugin_settings, 'pocket_generate_access_token' );
+
 
 		// Plugin Settings
 		// Priority of 9 on admin_menu to place settings at top of menu page
@@ -197,14 +200,13 @@ class David_VG {
 
 		// Twitter Hooks
 		$this->loader->add_action( 'init', $twitter_includes, 'create_custom_post_type' );
-		// $this->loader->add_action( 'cron_schedules', $twitter_includes, 'import_interval_minutes' );
-		// $this->loader->add_action( 'init', $twitter_includes, 'set_twitter_schedule' );
-		$this->loader->add_action( 'admin_head', $twitter_includes, 'import_tweets_as_posts' );
+		$this->loader->add_action( 'init', $twitter_includes, 'set_twitter_schedule' );
+		// $this->loader->add_action( 'admin_head', $twitter_includes, 'import_tweets_as_posts' );
 
-		// Pocket Hooks 
+		// Pocket Hooks
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
-		// $this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
-		$this->loader->add_action( 'admin_head', $pocket_includes, 'import_pocket_as_posts' );
+		$this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
+		// $this->loader->add_action( 'admin_head', $pocket_includes, 'import_pocket_as_posts' );
 
 		// Google Fit Hooks
 		$this->loader->add_action( 'init', $google_fit_includes, 'create_custom_post_type' );

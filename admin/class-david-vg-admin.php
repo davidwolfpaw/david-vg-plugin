@@ -115,4 +115,19 @@ class David_VG_Admin {
 
 	}
 
+
+	/**
+	 * Add once 5 minute interval to wp schedules
+	 *
+	 * @since    1.0.0
+	 * @param	 $interval
+	 */
+    public function import_interval_five_minutes( $interval ) {
+
+        $interval_time = 300;
+        $interval['five_minutes'] = array('interval' => $interval_time, 'display' => __('Every 5 minutes') );
+        return $interval;
+
+    }
+
 }

@@ -125,24 +125,15 @@ class David_VG_Twitter {
 
     }
 
-        /*= Add once 5 minute interval to wp schedules
-    -------------------------------------------------- */
-    // public function import_interval_minutes($interval) {
 
-    //     $interval_time = 300;
-    //     $interval['five_minutes'] = array('interval' => $interval_time, 'display' => __('Every 5 minutes') );
-    //     return $interval;
+    //Check and Schedule Cron job
+    public function set_twitter_schedule() {
 
-    // }
+        if ( ! wp_next_scheduled( 'import_tweets_as_posts' ) ) {
+            wp_schedule_event( time(), 'five_minutes', 'import_tweets_as_posts' );
+        }
 
-    // //Check and Schedule Cron job
-    // public function set_twitter_schedule() {
-
-    //     if (!wp_next_scheduled('import_tweets_as_posts')) {
-    //         wp_schedule_event(time(), 'five_minutes', 'import_tweets_as_posts');
-    //     }
-
-    // }
+    }
 
 
     /**

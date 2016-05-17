@@ -129,8 +129,8 @@ class David_VG_Pocket {
     //Check and Schedule Cron job
     public function set_pocket_schedule() {
 
-        if (!wp_next_scheduled('import_pocket_as_posts')) {
-            wp_schedule_event(time(), 'five_minutes', 'import_pocket_as_posts');
+        if ( ! wp_next_scheduled( 'import_pocket_as_posts' ) ) {
+            wp_schedule_event( time(), 'five_minutes', 'import_pocket_as_posts' );
         }
 
     }

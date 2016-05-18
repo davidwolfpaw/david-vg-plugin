@@ -23,9 +23,7 @@
 class David_VG_Deactivator {
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
+	 * All tasks to be run on deactivationk
 	 *
 	 * @since    1.0.0
 	 */
@@ -36,9 +34,14 @@ class David_VG_Deactivator {
 	}
 
 
-	function dvg_crontask_deactivation(){
+	/**
+	 * Remove all cron tasks scheduled by plugin
+	 *
+	 * @since    1.0.0
+	 */
+	public static function dvg_crontask_deactivation() {
 
-		wp_clear_scheduled_hook('import_tweets_as_posts');
+        wp_clear_scheduled_hook( 'dvg_cron_hook' );
 
 	}
 

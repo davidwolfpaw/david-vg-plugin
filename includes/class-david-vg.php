@@ -181,7 +181,8 @@ class David_VG {
 		// Plugin Admin
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'cron_schedules', $plugin_admin, 'import_interval_five_minutes' );
+		$this->loader->add_filter( 'cron_schedules', $plugin_admin, 'dvg_cron_interval_five_minutes' );
+		$this->loader->add_action( 'init', $plugin_admin, 'dvg_cron_hook_execution' );
 
 		// // Ajax
 		// $this->loader->add_action( 'wp_ajax_pocket_generate_request_token', $plugin_settings, 'pocket_generate_request_token' );
@@ -200,12 +201,12 @@ class David_VG {
 
 		// Twitter Hooks
 		$this->loader->add_action( 'init', $twitter_includes, 'create_custom_post_type' );
-		$this->loader->add_action( 'init', $twitter_includes, 'set_twitter_schedule' );
+		$this->loader->add_action( 'dvg_cron_hook', $twitter_includes, 'import_tweets_as_posts' );
 		// $this->loader->add_action( 'admin_head', $twitter_includes, 'import_tweets_as_posts' );
 
 		// Pocket Hooks
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
-		$this->loader->add_action( 'init', $pocket_includes, 'set_pocket_schedule' );
+		$this->loader->add_action( 'dvg_cron_hook', $pocket_includes, 'import_pocket_as_posts' );
 		// $this->loader->add_action( 'admin_head', $pocket_includes, 'import_pocket_as_posts' );
 
 		// Google Fit Hooks

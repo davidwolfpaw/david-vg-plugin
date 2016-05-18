@@ -122,12 +122,28 @@ class David_VG_Admin {
 	 * @since    1.0.0
 	 * @param	 $interval
 	 */
-    public function import_interval_five_minutes( $interval ) {
+    public function dvg_cron_interval_five_minutes( $interval ) {
 
-        $interval_time = 300;
+        $interval_time = 30;
         $interval['five_minutes'] = array('interval' => $interval_time, 'display' => __('Every 5 minutes') );
         return $interval;
 
     }
+
+
+
+	/**
+	 * Check and Schedule Cron Hook
+	 *
+	 * @since    1.0.0
+	 */
+    public function dvg_cron_hook_execution() {
+
+        if ( ! wp_next_scheduled( 'dvg_cron_hook' ) ) {
+            wp_schedule_event( time(), 'five_minutes', 'dvg_cron_hook' );
+        }
+
+    }
+
 
 }

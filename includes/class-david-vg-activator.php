@@ -38,8 +38,8 @@ class David_VG_Activator {
 
 	function dvg_crontask_activation(){
 
-		if ( !wp_next_scheduled( 'import_tweets_as_posts' ) ) {
-			wp_schedule_event( time(), 'five_minutes', 'import_tweets_as_posts' );
+		if ( ! wp_next_scheduled( 'dvg_cron_hook' ) ) {
+			wp_schedule_event( time(), 'five_minutes', 'dvg_cron_hook' );
 		}
 
 	}

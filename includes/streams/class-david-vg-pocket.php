@@ -177,22 +177,28 @@ class David_VG_Pocket {
                 // Create post content as sanitized text
                 $save_post_content = strip_tags( html_entity_decode( $save['excerpt'] ) );
 
-                // Insert post parameters
-                $insert_id = $this->create_post( $save_post_content, $save_post_title, $publish_date_time );
+                // Check to make sure that it's not a blank post
+                // Sometimes Pocket is really weird with saves :(
+                if( $save_post_title != '' && $save_post_content != '' ) {
 
-                // Add featured image to post
-                $this->create_featured_image( $save, $insert_id );
+                    // Insert post parameters
+                    $insert_id = $this->create_post( $save_post_content, $save_post_title, $publish_date_time );
 
-                // Save's original URL
-                $save_url  = $save['resolved_url'];
+                    // Add featured image to post
+                    $this->create_featured_image( $save, $insert_id );
 
-                // Save's original URL
-                $save_byline  = $this->create_save_byline( $save );
+                    // Save's original URL
+                    $save_url  = $save['resolved_url'];
 
-                // Update save post meta
-                update_post_meta( $insert_id, '_save_id', $save_id );
-                update_post_meta( $insert_id, '_save_url', $save_url );
-                update_post_meta( $insert_id, '_save_byline', $save_byline );
+                    // Save's original URL
+                    $save_byline  = $this->create_save_byline( $save );
+
+                    // Update save post meta
+                    update_post_meta( $insert_id, '_save_id', $save_id );
+                    update_post_meta( $insert_id, '_save_url', $save_url );
+                    update_post_meta( $insert_id, '_save_byline', $save_byline );
+
+                }
 
             }
 

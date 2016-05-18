@@ -124,7 +124,7 @@ class David_VG_Admin {
 	 */
     public function dvg_cron_interval_five_minutes( $interval ) {
 
-        $interval_time = 30;
+        $interval_time = 300;
         $interval['five_minutes'] = array('interval' => $interval_time, 'display' => __('Every 5 minutes') );
         return $interval;
 

@@ -168,14 +168,7 @@ class David_VG_Pocket {
                 // Do Nothing with saves that exist in the DB already
                 if( $post_exist ) continue;
 
-                // Set save time as post publish date
-                $publish_date_time = $this->set_publish_time( $save );
-
-                // Create post title as sanitized text
-                $save_post_title = strip_tags( html_entity_decode( $save['resolved_title'] ) );
-
-                // Create post content as sanitized text
-                $save_post_content = strip_tags( html_entity_decode( $save['excerpt'] ) );
+                $this->create_post_data( $save );
 
                 // Check to make sure that it's not a blank post
                 // Sometimes Pocket is really weird with saves :(
@@ -216,6 +209,8 @@ class David_VG_Pocket {
     /**
      * Connect to Pocket grab data
      *
+     * @param $post_settings_array
+     *
      * @return $saves
      */
     public function connect_to_pocket( $post_settings_array ) {
@@ -242,7 +237,32 @@ class David_VG_Pocket {
 
 
     /**
+     * Tidy up Pocket data for our uses
+     *
+     * @param $save
+     *
+     * @return $save_data
+     */
+    public function create_post_data( $save ) {
+
+        // Set save time as post publish date
+        $save_data['publish_date_time'] = $this->set_publish_time( $save );
+
+        // Create post title as sanitized text
+        $save_data['save_post_title'] = strip_tags( html_entity_decode( $save['resolved_title'] ) );
+
+        // Create post content as sanitized text
+        $save_data['save_post_content'] = strip_tags( html_entity_decode( $save['excerpt'] ) );
+
+        return $save_data;
+
+    }
+
+
+    /**
      * Get main image and save to post as featured image
+     *
+     * @param $save, $insert_id
      *
      */
     public function create_featured_image( $save, $insert_id ) {
@@ -303,7 +323,12 @@ class David_VG_Pocket {
 
     }
 
-
+    /**
+     * Convert the time into a publishable time
+     *
+     * @param $save
+     *
+     */
     public function set_publish_time( $save ) {
 
         // Get time added to account in UTC

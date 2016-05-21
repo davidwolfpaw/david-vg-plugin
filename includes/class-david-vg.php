@@ -202,16 +202,14 @@ class David_VG {
 		// Twitter Hooks
 		$this->loader->add_action( 'init', $twitter_includes, 'create_custom_post_type' );
 		$this->loader->add_action( 'dvg_cron_hook', $twitter_includes, 'import_tweets_as_posts' );
-		// $this->loader->add_action( 'admin_head', $twitter_includes, 'import_tweets_as_posts' );
 
 		// Pocket Hooks
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		$this->loader->add_action( 'dvg_cron_hook', $pocket_includes, 'import_pocket_as_posts' );
-		// $this->loader->add_action( 'admin_head', $pocket_includes, 'import_pocket_as_posts' );
 
 		// Google Fit Hooks
 		$this->loader->add_action( 'init', $google_fit_includes, 'create_custom_post_type' );
-		// $this->loader->add_action( 'the_content', $google_fit_includes, 'import_google_fit_as_posts' );
+		// $this->loader->add_action( 'dvg_cron_hook', $google_fit_includes, 'import_google_fit_as_posts' );
 
 		// Daily Hooks
 		$this->loader->add_action( 'init', $daily_includes, 'create_custom_post_type' );

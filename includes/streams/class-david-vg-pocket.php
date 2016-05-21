@@ -194,9 +194,15 @@ class David_VG_Pocket {
                     $save_byline  = $this->create_save_byline( $save );
 
                     // Update save post meta
-                    update_post_meta( $insert_id, '_save_id', $save_id );
-                    update_post_meta( $insert_id, '_save_url', $save_url );
-                    update_post_meta( $insert_id, '_save_byline', $save_byline );
+                    if( ! add_post_meta( $insert_id, '_save_id', $save_id, true ) ) {
+                        update_post_meta( $insert_id, '_save_id', $save_id );
+                    }
+                    if( ! add_post_meta( $insert_id, '_save_url', $save_id, true ) ) {
+                        update_post_meta( $insert_id, '_save_url', $save_url );
+                    }
+                    if( ! add_post_meta( $insert_id, '_save_byline', $save_id, true ) ) {
+                        update_post_meta( $insert_id, '_save_byline', $save_byline );
+                    }
 
                 }
 

@@ -3,10 +3,10 @@
 /**
  * Base Class for Datum
  *
- * @link       http://david.vg
- * @since      1.0.0
+ * @link     http://david.vg
+ * @since    1.0.0
  *
- * @package    David_VG
+ * @package David_VG
  * @subpackage David_VG/includes
  */
 
@@ -15,27 +15,27 @@ require_once plugin_dir_path( __FILE__ ) . 'pocket/Pocket.php';
 
 /**
  *
- * @package    David_VG
+ * @package David_VG
  * @subpackage David_VG/includes
- * @author     David Laietta <david@david.vg>
+ * @author   David Laietta <david@david.vg>
  */
 class David_VG_Pocket {
 
     /**
      * The ID of this plugin.
      *
-     * @since    1.0.0
+     * @since   1.0.0
      * @access   private
-     * @var      string    $plugin_name    The ID of this plugin.
+     * @var   string $plugin_name The ID of this plugin.
      */
     private $plugin_name;
 
     /**
      * The version of this plugin.
      *
-     * @since    1.0.0
+     * @since   1.0.0
      * @access   private
-     * @var      string    $version    The current version of this plugin.
+     * @var   string $version The current version of this plugin.
      */
     private $version;
 
@@ -44,7 +44,7 @@ class David_VG_Pocket {
      *
      * @since   1.0.0
      * @access  private
-     * @var     string      $option_name    Option name of this plugin
+     * @var  string $option_name Option name of this plugin
      */
     private $option_name = 'dvg_pocket';
 
@@ -52,9 +52,9 @@ class David_VG_Pocket {
     /**
      * Initialize the class and set its properties.
      *
-     * @since    1.0.0
-     * @param      string    $plugin_name       The name of this plugin.
-     * @param      string    $version    The version of this plugin.
+     * @since   1.0.0
+     * @param    string   $plugin_name   The name of this plugin.
+     * @param    string   $version   The version of this plugin.
      */
     public function __construct( $plugin_name, $version ) {
 
@@ -75,51 +75,51 @@ class David_VG_Pocket {
         // Register Custom Post Type
 
         $labels = array(
-            'name'                  => _x( 'Pocket Stream', 'Post Type General Name', 'david-vg' ),
-            'singular_name'         => _x( 'Pocket', 'Post Type Singular Name', 'david-vg' ),
-            'menu_name'             => __( 'Pocket', 'david-vg' ),
+            'name'      => _x( 'Pocket Stream', 'Post Type General Name', 'david-vg' ),
+            'singular_name'   => _x( 'Pocket', 'Post Type Singular Name', 'david-vg' ),
+            'menu_name' => __( 'Pocket', 'david-vg' ),
             'name_admin_bar'        => __( 'Pocket', 'david-vg' ),
-            'archives'              => __( 'Pocket Archives', 'david-vg' ),
-            'parent_item_colon'     => __( 'Parent Pocket:', 'david-vg' ),
-            'all_items'             => __( 'Pocket', 'david-vg' ),
-            'add_new_item'          => __( 'Add New Pocket', 'david-vg' ),
-            'add_new'               => __( 'Add New', 'david-vg' ),
-            'new_item'              => __( 'New Pocket', 'david-vg' ),
-            'edit_item'             => __( 'Edit Pocket', 'david-vg' ),
-            'update_item'           => __( 'Update Pocket', 'david-vg' ),
-            'view_item'             => __( 'View Pocket', 'david-vg' ),
-            'search_items'          => __( 'Search Pocket', 'david-vg' ),
-            'not_found'             => __( 'Not found', 'david-vg' ),
+            'archives'    => __( 'Pocket Archives', 'david-vg' ),
+            'parent_item_colon'  => __( 'Parent Pocket:', 'david-vg' ),
+            'all_items' => __( 'Pocket', 'david-vg' ),
+            'add_new_item'    => __( 'Add New Pocket', 'david-vg' ),
+            'add_new'         => __( 'Add New', 'david-vg' ),
+            'new_item'    => __( 'New Pocket', 'david-vg' ),
+            'edit_item' => __( 'Edit Pocket', 'david-vg' ),
+            'update_item'       => __( 'Update Pocket', 'david-vg' ),
+            'view_item' => __( 'View Pocket', 'david-vg' ),
+            'search_items'    => __( 'Search Pocket', 'david-vg' ),
+            'not_found' => __( 'Not found', 'david-vg' ),
             'not_found_in_trash'    => __( 'Not found in Trash', 'david-vg' ),
             'featured_image'        => __( 'Featured Image', 'david-vg' ),
             'set_featured_image'    => __( 'Set featured image', 'david-vg' ),
             'remove_featured_image' => __( 'Remove featured image', 'david-vg' ),
             'use_featured_image'    => __( 'Use as featured image', 'david-vg' ),
-            'insert_into_item'      => __( 'Insert into item', 'david-vg' ),
+            'insert_into_item'  => __( 'Insert into item', 'david-vg' ),
             'uploaded_to_this_item' => __( 'Uploaded to this item', 'david-vg' ),
             'items_list'            => __( 'Pocket list', 'david-vg' ),
             'items_list_navigation' => __( 'Pocket list navigation', 'david-vg' ),
-            'filter_items_list'     => __( 'Filter items list', 'david-vg' ),
+            'filter_items_list'  => __( 'Filter items list', 'david-vg' ),
         );
         $args = array(
-            'label'                 => __( 'Pocket', 'david-vg' ),
-            'description'           => __( 'Stream of Pocket Data', 'david-vg' ),
+            'label'  => __( 'Pocket', 'david-vg' ),
+            'description'       => __( 'Stream of Pocket Data', 'david-vg' ),
             'labels'                => $labels,
-            'supports'              => array( 'title', 'editor', 'author', 'thumbnail', ),
+            'supports'    => array( 'title', 'editor', 'author', 'thumbnail', ),
             'taxonomies'            => array( 'category', 'post_tag' ),
-            'hierarchical'          => false,
+            'hierarchical'    => false,
             'public'                => true,
-            'show_ui'               => true,
-            'show_in_menu'          => $this->plugin_name,
-            'menu_position'         => 5,
-            'menu_icon'             => 'dashicons-media-text',
-            'show_in_admin_bar'     => true,
-            'show_in_nav_menus'     => true,
+            'show_ui'         => true,
+            'show_in_menu'    => $this->plugin_name,
+            'menu_position'   => 5,
+            'menu_icon' => 'dashicons-media-text',
+            'show_in_admin_bar'  => true,
+            'show_in_nav_menus'  => true,
             'can_export'            => true,
-            'has_archive'           => true,
+            'has_archive'       => true,
             'exclude_from_search'   => false,
             'publicly_queryable'    => true,
-            'capability_type'       => 'post',
+            'capability_type'     => 'post',
         );
         register_post_type( 'pocket_stream', $args );
 
@@ -168,34 +168,20 @@ class David_VG_Pocket {
                 // Do Nothing with saves that exist in the DB already
                 if( $post_exist ) continue;
 
-                $this->create_post_data( $save );
+                $save_data = $this->create_post_data( $save );
 
                 // Check to make sure that it's not a blank post
                 // Sometimes Pocket is really weird with saves :(
-                if( $save_post_title != '' && $save_post_content != '' ) {
+                if( $save_data['save_post_title'] != '' && $save_data['save_post_content'] != '' ) {
 
-                    // Insert post parameters
-                    $insert_id = $this->create_post( $save_post_content, $save_post_title, $publish_date_time );
+                    // Insert post parameters and create post
+                    $insert_id = $this->create_post( $save_data['save_post_content'], $save_data['save_post_title'], $save_data['publish_date_time'] );
 
                     // Add featured image to post
                     $this->create_featured_image( $save, $insert_id );
 
-                    // Save's original URL
-                    $save_url  = $save['resolved_url'];
-
-                    // Save's original URL
-                    $save_byline  = $this->create_save_byline( $save );
-
-                    // Update save post meta
-                    if( ! add_post_meta( $insert_id, '_save_id', $save_id, true ) ) {
-                        update_post_meta( $insert_id, '_save_id', $save_id );
-                    }
-                    if( ! add_post_meta( $insert_id, '_save_url', $save_id, true ) ) {
-                        update_post_meta( $insert_id, '_save_url', $save_url );
-                    }
-                    if( ! add_post_meta( $insert_id, '_save_byline', $save_id, true ) ) {
-                        update_post_meta( $insert_id, '_save_byline', $save_byline );
-                    }
+                    // Add postmeta to post
+                    $this->create_save_postmeta( $save_data, $insert_id );
 
                 }
 
@@ -254,6 +240,12 @@ class David_VG_Pocket {
         // Create post content as sanitized text
         $save_data['save_post_content'] = strip_tags( html_entity_decode( $save['excerpt'] ) );
 
+        // Save's original URL
+        $save_data['save_url']  = esc_url( $save['resolved_url'] );
+
+        // Save's original URL
+        $save_data['save_byline']  = $this->create_save_byline( $save );
+
         return $save_data;
 
     }
@@ -297,13 +289,8 @@ class David_VG_Pocket {
                     'post_mime_type' => $wp_filetype['type'],
                     'post_title'     => sanitize_file_name( $filename ),
                     'post_content'   => '',
-                    'post_status'    => 'inherit'
+                    'post_status'   => 'inherit'
                     );
-
-
-                // echo '<pre>';
-                // var_dump($image_data);
-                // echo '</pre>';
 
                 // Create the attachment
                 $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
@@ -317,6 +304,32 @@ class David_VG_Pocket {
                 // And finally assign featured image to post
                 set_post_thumbnail( $insert_id, $attach_id );
 
+            }
+
+        }
+
+    }
+
+
+    /**
+     * Get main image and save to post as featured image
+     *
+     * @param $save_data, $insert_id
+     *
+     */
+    public function create_save_postmeta( $save_data, $insert_id ) {
+
+        if( isset( $save_data ) ) {
+
+            // Update save post meta
+            if( ! add_post_meta( $insert_id, '_save_id', $save_data['save_id'], true ) ) {
+                update_post_meta( $insert_id, '_save_id', $save_data['save_id'] );
+            }
+            if( ! add_post_meta( $insert_id, '_save_url', $save_data['save_url'], true ) ) {
+                update_post_meta( $insert_id, '_save_url', $save_data['save_url'] );
+            }
+            if( ! add_post_meta( $insert_id, '_save_byline', $save_data['save_byline'], true ) ) {
+                update_post_meta( $insert_id, '_save_byline', $save_data['save_byline'] );
             }
 
         }
@@ -382,10 +395,10 @@ class David_VG_Pocket {
         $data = array(
             'post_content'   => $save_post_content,
             'post_title'     => $save_post_title,
-            'post_status'    => 'publish',
-            'post_type'      => 'pocket_stream',
-            'post_author'    => 1,
-            'post_date'      => $publish_date_time,
+            'post_status'   => 'publish',
+            'post_type'   => 'pocket_stream',
+            'post_author'   => 1,
+            'post_date'   => $publish_date_time,
             'comment_status' => 'closed'
             );
 

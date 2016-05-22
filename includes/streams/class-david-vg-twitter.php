@@ -200,15 +200,15 @@ class David_VG_Twitter {
                     // Insert post parameters
                     $insert_id = $this->create_post( $tweet_text, $twitter_post_title, $publish_date_time );
 
-                    // Add featured image to post
-                    $this->create_featured_image( $tweet, $insert_id );
-
                     // Tweet's original URL
                     $tweet_url  = $tweet_url = 'https://twitter.com/' . $tweet->user->screen_name . '/status/' . $tweet_id;
 
                     // Update tweet post meta for the ID and URL
                     update_post_meta( $insert_id, '_tweet_id', $tweet_id );
                     update_post_meta( $insert_id, '_tweet_url', $tweet_url );
+
+                    // Add featured image to post
+                    $this->create_featured_image( $tweet, $insert_id );
 
                 }
 

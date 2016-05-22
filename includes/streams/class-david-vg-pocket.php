@@ -126,16 +126,6 @@ class David_VG_Pocket {
     }
 
 
-    //Check and Schedule Cron job
-    public function set_pocket_schedule() {
-
-        if ( ! wp_next_scheduled( 'import_pocket_as_posts' ) ) {
-            wp_schedule_event( time(), 'five_minutes', 'import_pocket_as_posts' );
-        }
-
-    }
-
-
     /**
      * Import data as post
      *
@@ -159,7 +149,7 @@ class David_VG_Pocket {
                 $post_exist_args = array(
                     'post_type' => 'pocket_stream',
                     'meta_key' => '_save_id',
-                    'meta_value' => $save_id,
+                    'meta_value' => $save_id
                     );
 
                 // Check to see if the save exists in the DB
@@ -177,13 +167,102 @@ class David_VG_Pocket {
                     // Insert post parameters and create post
                     $insert_id = $this->create_post( $save_data['save_post_content'], $save_data['save_post_title'], $save_data['publish_date_time'] );
 
+                    // Add postmeta to post
+                    $this->create_save_postmeta( $save_data, $save_id, $insert_id );
+
                     // Add featured image to post
                     $this->create_featured_image( $save, $insert_id );
 
-                    // Add postmeta to post
-                    $this->create_save_postmeta( $save_data, $insert_id );
-
                 }
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Import data as post
+     *
+     * @return posts
+     */
+    public function import_pocket_as_posts_test() {
+
+        // Get settings from Pocket settings page
+        $post_settings_array = $this->get_post_settings_array();
+
+        // Connect to Pocket OAuth
+        $saves = $this->connect_to_pocket( $post_settings_array );
+
+        // Let's play with the saves!
+        if( $saves ){
+
+            $count = 0;
+
+            foreach( $saves['list'] as $save ) {
+
+
+            $count++;
+
+
+        if( $save['has_image'] == '1' ) {
+
+            $save_media = $save['image'];
+
+            if( $save_media ) {
+
+                // Get the URL of the image
+                $save_media_url = $save_media['src'];
+                $upload_dir = wp_upload_dir(); // Set upload folder
+                $image_data = file_get_contents( $save_media_url ); // Get image data
+                $filename   = basename( $save_media_url ); // Create image file name
+
+                // Check folder permission and define file location
+                if( wp_mkdir_p( $upload_dir['path'] ) ) {
+                    $file = $upload_dir['path'] . '/' . $filename;
+                } else {
+                    $file = $upload_dir['basedir'] . '/' . $filename;
+                }
+
+                // Create the image  file on the server
+                file_put_contents( $file, $image_data );
+
+                // Check image file type
+                $wp_filetype = wp_check_filetype( $filename, null );
+
+                // Set attachment data
+                $attachment = array(
+                    'post_mime_type' => $wp_filetype['type'],
+                    'post_title'     => sanitize_file_name( $filename ),
+                    'post_content'   => '',
+                    'post_status'   => 'inherit'
+                    );
+
+                // // Create the attachment
+                // $attach_id = wp_insert_attachment( $attachment, $file, $insert_id );
+
+                // // Define attachment metadata
+                // $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+
+                // // Assign metadata to attachment
+                // wp_update_attachment_metadata( $attach_id, $attach_data );
+
+                // // And finally assign featured image to post
+                // set_post_thumbnail( $insert_id, $attach_id );
+
+
+        echo '<pre class="wrap"><h3>' . $count . '</h3>';
+        var_dump($file);
+        // var_dump(array_keys($saves['list']));
+        echo '<hr /></pre>';
+
+            }
+
+        }
+
+
+
+
 
             }
 
@@ -213,7 +292,7 @@ class David_VG_Pocket {
             'state' => 'all',
             'sort' => 'newest',
             'detailType' => 'complete',
-            'count' => 20
+            'count' => 10
         );
         $saves = $pocket->retrieve( $params, $post_settings_array['access_token'] );
 
@@ -259,7 +338,7 @@ class David_VG_Pocket {
      */
     public function create_featured_image( $save, $insert_id ) {
 
-        if( isset( $save['image'] ) ) {
+        if( $save['has_image'] == '1' ) {
 
             $save_media = $save['image'];
 
@@ -317,20 +396,20 @@ class David_VG_Pocket {
      * @param $save_data, $insert_id
      *
      */
-    public function create_save_postmeta( $save_data, $insert_id ) {
+    public function create_save_postmeta( $save_data, $save_id, $insert_id ) {
 
         if( isset( $save_data ) ) {
 
             // Update save post meta
-            if( ! add_post_meta( $insert_id, '_save_id', $save_data['save_id'], true ) ) {
-                update_post_meta( $insert_id, '_save_id', $save_data['save_id'] );
-            }
-            if( ! add_post_meta( $insert_id, '_save_url', $save_data['save_url'], true ) ) {
+            // if( ! add_post_meta( $insert_id, '_save_id', $save_id, true ) ) {
+                update_post_meta( $insert_id, '_save_id', $save_id );
+            // }
+            // if( ! add_post_meta( $insert_id, '_save_url', $save_data['save_url'], true ) ) {
                 update_post_meta( $insert_id, '_save_url', $save_data['save_url'] );
-            }
-            if( ! add_post_meta( $insert_id, '_save_byline', $save_data['save_byline'], true ) ) {
+            // }
+            // if( ! add_post_meta( $insert_id, '_save_byline', $save_data['save_byline'], true ) ) {
                 update_post_meta( $insert_id, '_save_byline', $save_data['save_byline'] );
-            }
+            // }
 
         }
 
@@ -393,13 +472,13 @@ class David_VG_Pocket {
 
         // Insert post parameters
         $data = array(
-            'post_content'   => $save_post_content,
-            'post_title'     => $save_post_title,
-            'post_status'   => 'publish',
-            'post_type'   => 'pocket_stream',
-            'post_author'   => 1,
-            'post_date'   => $publish_date_time,
-            'comment_status' => 'closed'
+            'post_content'      => $save_post_content,
+            'post_title'        => $save_post_title,
+            'post_status'       => 'publish',
+            'post_type'         => 'pocket_stream',
+            'post_author'       => 1,
+            'post_date'         => $publish_date_time,
+            'comment_status'    => 'closed'
             );
 
         $insert_id = wp_insert_post( $data );
@@ -419,6 +498,32 @@ class David_VG_Pocket {
         return $post_settings_array;
 
     }
+
+
+
+    public function view_pocket_data() {
+
+        // Get settings from Pocket settings page
+        $post_settings_array = $this->get_post_settings_array();
+
+        // Connect to Pocket OAuth
+        $saves = $this->connect_to_pocket( $post_settings_array );
+
+        // Let's play with the saves!
+        if( $saves ){
+
+            foreach( $saves['list'] as $save ) {
+
+                echo '<pre>';
+                    var_dump($save);
+                echo '</pre>';
+
+            }
+
+        }
+
+    }
+
 
 
 }

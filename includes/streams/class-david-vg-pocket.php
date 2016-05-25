@@ -12,6 +12,9 @@
 
 // Require Pocket OAuth package
 require_once plugin_dir_path( __FILE__ ) . 'pocket/Pocket.php';
+require_once(ABSPATH . 'wp-admin/includes/media.php');
+require_once(ABSPATH . 'wp-admin/includes/file.php');
+require_once(ABSPATH . 'wp-admin/includes/image.php');
 
 /**
  *
@@ -251,10 +254,10 @@ class David_VG_Pocket {
                 // set_post_thumbnail( $insert_id, $attach_id );
 
 
-        echo '<pre class="wrap"><h3>' . $count . '</h3>';
-        var_dump($file);
+        // echo '<pre class="wrap"><h3>' . $count . '</h3>';
+        // var_dump($save);
         // var_dump(array_keys($saves['list']));
-        echo '<hr /></pre>';
+        // echo '<hr /></pre>';
 
             }
 
@@ -358,7 +361,8 @@ class David_VG_Pocket {
                 }
 
                 // Create the image  file on the server
-                file_put_contents( $file, $image_data );
+                // file_put_contents( $file, $image_data );
+                media_sideload_image( $save_media_url, $insert_id, $save['given_title'] );
 
                 // Check image file type
                 $wp_filetype = wp_check_filetype( $filename, null );

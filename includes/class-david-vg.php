@@ -207,7 +207,7 @@ class David_VG {
 		$this->loader->add_action( 'init', $pocket_includes, 'create_custom_post_type' );
 		$this->loader->add_action( 'dvg_cron_hook', $pocket_includes, 'import_pocket_as_posts' );
 		// $this->loader->add_action( 'wp_footer', $pocket_includes, 'view_pocket_data' );
-		// $this->loader->add_action( 'wp_footer', $pocket_includes, 'import_pocket_as_posts_test' );
+		$this->loader->add_action( 'wp_footer', $pocket_includes, 'import_pocket_as_posts_test' );
 
 		// Google Fit Hooks
 		$this->loader->add_action( 'init', $google_fit_includes, 'create_custom_post_type' );

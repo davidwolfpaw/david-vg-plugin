@@ -1,7 +1,7 @@
 NOTE: This is very much still in production. Not ready for use.
 
 === Plugin Name(Still coming up with something awesome) ===
-Contributors: davidjlaietta
+Contributors: wolfpaw
 Donate link: http://david.vg/
 Tags: post, twitter
 Requires at least: 4.0
